@@ -2,6 +2,11 @@ package com.luigidev.michixo.domain
 
 import com.luigidev.michixo.model.Player
 
+data class WinResult(
+    val player: Player,
+    val line: List<Int>
+)
+
 object Rules {
 
     private val winLines = listOf(
@@ -10,16 +15,19 @@ object Rules {
         listOf(0,4,8), listOf(2,4,6)
     )
 
-    fun winner(board: List<Player>): Player? {
-        for(line in winLines) {
+    fun checkWinner(board: List<Player>): WinResult? {
+        for (line in winLines) {
             val a = board[line[0]]
-            if(a != Player.NONE && a == board[line[1]] && a == board[line[2]]){
-                return a
+            if (a != Player.NONE &&
+                a == board[line[1]] &&
+                a == board[line[2]]
+            ) {
+                return WinResult(a, line)
             }
         }
         return null
     }
 
-    fun isDraw(board: List<Player>): Boolean =
-        board.all { it != Player.NONE  } && winner(board) == null
+    fun isDraw(board: List<Player>) =
+        board.all { it != Player.NONE } && checkWinner(board) == null
 }

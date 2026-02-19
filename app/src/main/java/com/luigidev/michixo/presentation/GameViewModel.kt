@@ -17,20 +17,20 @@ class GameViewModel(
 
     fun onCellTap(index: Int) {
         _uiState.update { state ->
-            // si ya terminó el juego, ignorar taps
-            if (state.winner != null || state.isDraw) return
+            // If I have already finished the game, ignore taps.
+            if (state.winner != null || state.isDraw) return@update state
 
             val nextBoard = engine.makeMove(state.board, index, state.currentTurn)
 
-            // si no cambió, fue un movimiento inválido
-            if (nextBoard == state.board) return
+            if (nextBoard == state.board) return@update state
 
-            val winner = Rules.winner(nextBoard)
+            val winResult = Rules.checkWinner(nextBoard)
             val draw = Rules.isDraw(nextBoard)
 
             state.copy(
                 board = nextBoard,
-                winner = winner,
+                winner = winResult?.player,
+                winLine = winResult?.line,
                 isDraw = draw,
                 currentTurn = if (state.currentTurn == Player.X) Player.O else Player.X
             )

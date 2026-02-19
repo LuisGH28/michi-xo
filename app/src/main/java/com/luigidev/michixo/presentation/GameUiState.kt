@@ -6,5 +6,6 @@ data class GameUiState(
     val board: List<Player> = List(9) { Player.NONE },
     val currentTurn: Player = Player.X,
     val winner: Player? = null,
+    val winLine: List<Int>? = null,
     val isDraw: Boolean = false
 )
