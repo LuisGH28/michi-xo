@@ -17,13 +17,24 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.draw.clip
+import com.luigidev.michixo.presentation.Screen
 
 @Composable
 fun TicTacToeScreen(vm: GameViewModel) {
     val state = vm.uiState.collectAsState().value
+
+    if(state.screen == Screen.HOME){
+        HomeScreen(vm)
+        return
+    }
+
     val gameFinished = state.winner != null || state.isDraw
 
-    Box(modifier = Modifier.fillMaxSize()) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color(0xFFFFF0F6))
+        ) {
 
         // PRINCIPAL CONTENT
         Column(
@@ -37,7 +48,13 @@ fun TicTacToeScreen(vm: GameViewModel) {
                 text = when {
                     state.winner != null -> "Ganó: ${state.winner}"
                     state.isDraw -> "Empate"
+                    state.isAiThinking -> "IA Pensando.."
                     else -> "Turno: ${state.currentTurn}"
+                },
+                color = when (state.currentTurn){
+                    Player.X -> Color(0xFFFF80AB)
+                    Player.O -> Color(0xFF81C784)
+                    else -> Color(0xFF6D4C41)
                 }
             )
 
@@ -88,12 +105,26 @@ fun TicTacToeScreen(vm: GameViewModel) {
                     ) {
                         Text("Otra vez", maxLines = 1)
                     }
+
+                    Spacer(Modifier.height(6.dp))
+
+                    Button(
+                        onClick = { vm.backToHome() },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(36.dp),
+                        colors = androidx.wear.compose.material.ButtonDefaults.buttonColors(
+                            backgroundColor = Color(0xFFFFF80AB),
+                            contentColor = Color.Black
+                        )
+                    ){
+                        Text("Regresar", maxLines = 1)
+                    }
                 }
             }
         }
     }
 }
-
 
 @Composable
 private fun Board(
@@ -111,7 +142,12 @@ private fun Board(
                             onClick = { onTap(index) },
                             modifier = Modifier
                                 .size(56.dp)
-                                .padding(2.dp)
+                                .padding(2.dp),
+                            shape = RoundedCornerShape(18.dp),
+                            colors = androidx.wear.compose.material.ButtonDefaults.buttonColors(
+                                backgroundColor = Color(0xFFFFC1D6), // rosa pastel
+                                contentColor = Color(0xFF6D4C41)      // cafecito cute
+                            )
                         ) {
                             Text(
                                 text = when (board[index]) {
@@ -121,6 +157,7 @@ private fun Board(
                                 }
                             )
                         }
+
                     }
                 }
             }
@@ -146,7 +183,7 @@ private fun Board(
                 }
 
                 drawLine(
-                    color = Color.Red,
+                    color = Color(0xFFB76E79),
                     start = start,
                     end = end,
                     strokeWidth = 8f

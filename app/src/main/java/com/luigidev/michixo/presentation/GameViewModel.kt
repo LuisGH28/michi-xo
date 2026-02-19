@@ -8,6 +8,9 @@ import com.luigidev.michixo.model.Player
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class GameViewModel(
     private val engine: GameEngine = GameEngine()
@@ -18,51 +21,94 @@ class GameViewModel(
 
     private val ai = AiPlayer()
 
+    fun startGame(){
+        _uiState.value = GameUiState(
+            screen = Screen.GAME,
+            board = engine.newBoard(),
+            currentTurn = Player.X
+        )
+    }
+
+    fun backToHome(){
+        _uiState.value = GameUiState(screen = Screen.HOME)
+    }
+
     fun onCellTap(index: Int) {
+        // 1) aplicamos el move del humano y dejamos la IA "pensando"
+        var boardAfterHuman: List<Player>? = null
+
         _uiState.update { state ->
+            if (state.screen != Screen.GAME) return@update state
             if (state.winner != null || state.isDraw) return@update state
+            if (state.isAiThinking) return@update state
 
-            if (state.currentTurn != Player.X) return@update state
+            // humano siempre X
+            val next = engine.makeMove(state.board, index, Player.X)
+            if (next == state.board) return@update state
 
-            val boardAfterHuman = engine.makeMove(state.board, index, Player.X)
-            if (boardAfterHuman == state.board) return@update state
+            val humanWin = Rules.checkWinner(next)
+            val humanDraw = Rules.isDraw(next)
 
-            val humanWin = Rules.checkWinner(boardAfterHuman)
-            val humanDraw = Rules.isDraw(boardAfterHuman)
-
+            // si terminó, no lanzamos IA
             if (humanWin != null || humanDraw) {
                 return@update state.copy(
-                    board = boardAfterHuman,
+                    board = next,
                     winner = humanWin?.player,
                     winLine = humanWin?.line,
                     isDraw = humanDraw,
-                    currentTurn = Player.X
+                    currentTurn = Player.X,
+                    isAiThinking = false
                 )
             }
 
-            val aiMove = ai.chooseMove(boardAfterHuman, Player.O)
-            if (aiMove == null) {
-                return@update state.copy(
-                    board = boardAfterHuman,
-                    currentTurn = Player.X
-                )
-            }
-
-            val boardAfterAi = engine.makeMove(boardAfterHuman, aiMove, Player.O)
-            val aiWin = Rules.checkWinner(boardAfterAi)
-            val aiDraw = Rules.isDraw(boardAfterAi)
+            // guardamos para usarlo fuera
+            boardAfterHuman = next
 
             state.copy(
-                board = boardAfterAi,
-                winner = aiWin?.player,
-                winLine = aiWin?.line,
-                isDraw = aiDraw,
-                currentTurn = Player.X
+                board = next,
+                currentTurn = Player.O,
+                isAiThinking = true
             )
+        }
+
+        // 2) si hay jugada de humano válida y el juego sigue, la IA juega después de un delay
+        val baseBoard = boardAfterHuman ?: return
+
+        viewModelScope.launch {
+            delay(450) // feeling nice en reloj
+
+            _uiState.update { state ->
+                // por si algo cambió
+                if (state.winner != null || state.isDraw) return@update state
+
+                val aiMove = ai.chooseMove(baseBoard, Player.O) ?: return@update state.copy(isAiThinking = false)
+
+                val boardAfterAi = engine.makeMove(baseBoard, aiMove, Player.O)
+                val aiWin = Rules.checkWinner(boardAfterAi)
+                val aiDraw = Rules.isDraw(boardAfterAi)
+
+                state.copy(
+                    board = boardAfterAi,
+                    winner = aiWin?.player,
+                    winLine = aiWin?.line,
+                    isDraw = aiDraw,
+                    currentTurn = Player.X,
+                    isAiThinking = false
+                )
+            }
         }
     }
 
+
     fun reset() {
-        _uiState.value = GameUiState(board = engine.newBoard(), currentTurn = Player.X)
+        _uiState.update { state ->
+            state.copy(
+                board = engine.newBoard(),
+                currentTurn = Player.X,
+                winner = null,
+                winLine = null,
+                isDraw = false
+            )
+        }
     }
 }
