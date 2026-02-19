@@ -1,6 +1,7 @@
 package com.luigidev.michixo.presentation
 
 import androidx.lifecycle.ViewModel
+import com.luigidev.michixo.domain.AiPlayer
 import com.luigidev.michixo.domain.GameEngine
 import com.luigidev.michixo.domain.Rules
 import com.luigidev.michixo.model.Player
@@ -15,29 +16,53 @@ class GameViewModel(
     private val _uiState = MutableStateFlow(GameUiState(board = engine.newBoard()))
     val uiState: StateFlow<GameUiState> = _uiState
 
+    private val ai = AiPlayer()
+
     fun onCellTap(index: Int) {
         _uiState.update { state ->
-            // If I have already finished the game, ignore taps.
             if (state.winner != null || state.isDraw) return@update state
 
-            val nextBoard = engine.makeMove(state.board, index, state.currentTurn)
+            if (state.currentTurn != Player.X) return@update state
 
-            if (nextBoard == state.board) return@update state
+            val boardAfterHuman = engine.makeMove(state.board, index, Player.X)
+            if (boardAfterHuman == state.board) return@update state
 
-            val winResult = Rules.checkWinner(nextBoard)
-            val draw = Rules.isDraw(nextBoard)
+            val humanWin = Rules.checkWinner(boardAfterHuman)
+            val humanDraw = Rules.isDraw(boardAfterHuman)
+
+            if (humanWin != null || humanDraw) {
+                return@update state.copy(
+                    board = boardAfterHuman,
+                    winner = humanWin?.player,
+                    winLine = humanWin?.line,
+                    isDraw = humanDraw,
+                    currentTurn = Player.X
+                )
+            }
+
+            val aiMove = ai.chooseMove(boardAfterHuman, Player.O)
+            if (aiMove == null) {
+                return@update state.copy(
+                    board = boardAfterHuman,
+                    currentTurn = Player.X
+                )
+            }
+
+            val boardAfterAi = engine.makeMove(boardAfterHuman, aiMove, Player.O)
+            val aiWin = Rules.checkWinner(boardAfterAi)
+            val aiDraw = Rules.isDraw(boardAfterAi)
 
             state.copy(
-                board = nextBoard,
-                winner = winResult?.player,
-                winLine = winResult?.line,
-                isDraw = draw,
-                currentTurn = if (state.currentTurn == Player.X) Player.O else Player.X
+                board = boardAfterAi,
+                winner = aiWin?.player,
+                winLine = aiWin?.line,
+                isDraw = aiDraw,
+                currentTurn = Player.X
             )
         }
     }
 
     fun reset() {
-        _uiState.value = GameUiState(board = engine.newBoard())
+        _uiState.value = GameUiState(board = engine.newBoard(), currentTurn = Player.X)
     }
 }
