@@ -17,6 +17,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.draw.clip
+import androidx.wear.compose.material.MaterialTheme
 import com.luigidev.michixo.presentation.Screen
 
 @Composable
@@ -33,7 +34,7 @@ fun TicTacToeScreen(vm: GameViewModel) {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFFFFF0F6))
+            .background(MaterialTheme.colors.background)
         ) {
 
         // PRINCIPAL CONTENT
@@ -52,7 +53,7 @@ fun TicTacToeScreen(vm: GameViewModel) {
                     else -> "Turno: ${state.currentTurn}"
                 },
                 color = when (state.currentTurn){
-                    Player.X -> Color(0xFFFF80AB)
+                    Player.X -> MaterialTheme.colors.primary
                     Player.O -> Color(0xFF81C784)
                     else -> Color(0xFF6D4C41)
                 }
@@ -80,7 +81,7 @@ fun TicTacToeScreen(vm: GameViewModel) {
                     modifier = Modifier
                         .widthIn(max = 200.dp)
                         .clip(RoundedCornerShape(18.dp))
-                        .background(Color(0xFF1A1A1A))
+                        .background(MaterialTheme.colors.onBackground)
                         .padding(horizontal = 16.dp, vertical = 12.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
@@ -99,7 +100,7 @@ fun TicTacToeScreen(vm: GameViewModel) {
                             .fillMaxWidth()
                             .height(36.dp),
                         colors = androidx.wear.compose.material.ButtonDefaults.buttonColors(
-                            backgroundColor = Color(0xFFFF80AB),
+                            backgroundColor = MaterialTheme.colors.primary,
                             contentColor = Color.Black
                         )
                     ) {
@@ -145,8 +146,8 @@ private fun Board(
                                 .padding(2.dp),
                             shape = RoundedCornerShape(18.dp),
                             colors = androidx.wear.compose.material.ButtonDefaults.buttonColors(
-                                backgroundColor = Color(0xFFFFC1D6), // rosa pastel
-                                contentColor = Color(0xFF6D4C41)      // cafecito cute
+                                backgroundColor = MaterialTheme.colors.secondary,
+                                contentColor = MaterialTheme.colors.onSurface
                             )
                         ) {
                             Text(
@@ -164,6 +165,7 @@ private fun Board(
         }
 
         if (winLine != null) {
+            val winLineColor = MaterialTheme.colors.onPrimary
             Canvas(modifier = Modifier.matchParentSize()) {
                 val cellSize = size.width / 3f
 
@@ -183,7 +185,7 @@ private fun Board(
                 }
 
                 drawLine(
-                    color = Color(0xFFB76E79),
+                    color = winLineColor,
                     start = start,
                     end = end,
                     strokeWidth = 8f

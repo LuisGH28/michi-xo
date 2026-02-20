@@ -21,20 +21,17 @@ class GameViewModel(
 
     private val ai = AiPlayer()
 
-    fun startGame(){
+    fun startGame() {
         _uiState.value = GameUiState(
-            screen = Screen.GAME,
-            board = engine.newBoard(),
-            currentTurn = Player.X
+            screen = Screen.GAME, board = engine.newBoard(), currentTurn = Player.X
         )
     }
 
-    fun backToHome(){
+    fun backToHome() {
         _uiState.value = GameUiState(screen = Screen.HOME)
     }
 
     fun onCellTap(index: Int) {
-        // 1) aplicamos el move del humano y dejamos la IA "pensando"
         var boardAfterHuman: List<Player>? = null
 
         _uiState.update { state ->
@@ -42,14 +39,14 @@ class GameViewModel(
             if (state.winner != null || state.isDraw) return@update state
             if (state.isAiThinking) return@update state
 
-            // humano siempre X
+
             val next = engine.makeMove(state.board, index, Player.X)
             if (next == state.board) return@update state
 
             val humanWin = Rules.checkWinner(next)
             val humanDraw = Rules.isDraw(next)
 
-            // si terminó, no lanzamos IA
+
             if (humanWin != null || humanDraw) {
                 return@update state.copy(
                     board = next,
@@ -61,27 +58,24 @@ class GameViewModel(
                 )
             }
 
-            // guardamos para usarlo fuera
             boardAfterHuman = next
 
             state.copy(
-                board = next,
-                currentTurn = Player.O,
-                isAiThinking = true
+                board = next, currentTurn = Player.O, isAiThinking = true
             )
         }
 
-        // 2) si hay jugada de humano válida y el juego sigue, la IA juega después de un delay
         val baseBoard = boardAfterHuman ?: return
 
         viewModelScope.launch {
-            delay(450) // feeling nice en reloj
+            delay(450)
 
             _uiState.update { state ->
-                // por si algo cambió
                 if (state.winner != null || state.isDraw) return@update state
 
-                val aiMove = ai.chooseMove(baseBoard, Player.O) ?: return@update state.copy(isAiThinking = false)
+                val aiMove = ai.chooseMove(baseBoard, Player.O) ?: return@update state.copy(
+                    isAiThinking = false
+                )
 
                 val boardAfterAi = engine.makeMove(baseBoard, aiMove, Player.O)
                 val aiWin = Rules.checkWinner(boardAfterAi)
@@ -98,7 +92,6 @@ class GameViewModel(
             }
         }
     }
-
 
     fun reset() {
         _uiState.update { state ->
