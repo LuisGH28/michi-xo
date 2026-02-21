@@ -49,7 +49,8 @@ fun TicTacToeScreen(vm: GameViewModel) {
         ) {
             Text(
                 text = when {
-                    state.winner != null -> "Ganó: ${state.winner}"
+                    state.winner == state.humanPlayer -> "Ganaste"
+                    state.winner == state.aiPlayer -> "Ganó Luz"
                     state.isDraw -> "Empate"
                     state.isAiThinking -> "Luz Pensando.."
                     else -> "Turno: ${state.currentTurn}"
@@ -91,7 +92,8 @@ fun TicTacToeScreen(vm: GameViewModel) {
                 ) {
                     Text(
                         text = when {
-                            state.winner != null -> "Ganó ${state.winner}"
+                            state.winner == state.humanPlayer -> "Ganaste"
+                            state.winner == state.aiPlayer -> "Ganó Luz"
                             else -> "Empate"
                         },
                         fontFamily = MichiFont,
