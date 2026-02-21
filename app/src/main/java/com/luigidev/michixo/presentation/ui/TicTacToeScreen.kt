@@ -17,8 +17,10 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.unit.sp
 import androidx.wear.compose.material.MaterialTheme
 import com.luigidev.michixo.presentation.Screen
+import com.luigidev.michixo.presentation.theme.MichiFont
 
 @Composable
 fun TicTacToeScreen(vm: GameViewModel) {
@@ -49,14 +51,16 @@ fun TicTacToeScreen(vm: GameViewModel) {
                 text = when {
                     state.winner != null -> "Ganó: ${state.winner}"
                     state.isDraw -> "Empate"
-                    state.isAiThinking -> "IA Pensando.."
+                    state.isAiThinking -> "Luz Pensando.."
                     else -> "Turno: ${state.currentTurn}"
                 },
                 color = when (state.currentTurn){
                     Player.X -> MaterialTheme.colors.primary
                     Player.O -> Color(0xFF81C784)
                     else -> Color(0xFF6D4C41)
-                }
+                },
+                fontFamily = MichiFont,
+                fontSize = 20.sp
             )
 
             Spacer(Modifier.height(8.dp))
@@ -89,7 +93,9 @@ fun TicTacToeScreen(vm: GameViewModel) {
                         text = when {
                             state.winner != null -> "Ganó ${state.winner}"
                             else -> "Empate"
-                        }
+                        },
+                        fontFamily = MichiFont,
+                        fontSize = 22.sp
                     )
 
                     Spacer(Modifier.height(6.dp))
@@ -104,7 +110,11 @@ fun TicTacToeScreen(vm: GameViewModel) {
                             contentColor = Color.Black
                         )
                     ) {
-                        Text("Otra vez", maxLines = 1)
+                        Text(
+                            "Otra vez", maxLines = 1,
+                            fontFamily = MichiFont,
+                            fontSize = 20.sp
+                        )
                     }
 
                     Spacer(Modifier.height(6.dp))
@@ -119,7 +129,11 @@ fun TicTacToeScreen(vm: GameViewModel) {
                             contentColor = Color.Black
                         )
                     ){
-                        Text("Regresar", maxLines = 1)
+                        Text(
+                            "Regresar", maxLines = 1,
+                            fontFamily = MichiFont,
+                            fontSize = 20.sp
+                        )
                     }
                 }
             }

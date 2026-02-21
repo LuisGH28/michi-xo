@@ -12,12 +12,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.unit.sp
 import androidx.wear.compose.material.Button
 import androidx.wear.compose.material.ButtonDefaults
 import androidx.wear.compose.material.MaterialTheme
 import androidx.wear.compose.material.Text
 import com.luigidev.michixo.R
 import com.luigidev.michixo.presentation.GameViewModel
+import com.luigidev.michixo.presentation.theme.MichiFont
 import com.luigidev.michixo.presentation.theme.MichiPink
 
 @Composable
@@ -56,13 +58,18 @@ fun HomeScreen(vm: GameViewModel) {
 
             Text(
                 text = "Michi XO",
-                color = MaterialTheme.colors.onPrimary
+                fontFamily = MichiFont,
+                fontSize = 22.sp,
+                color = MaterialTheme.colors.onPrimary,
+                letterSpacing = 2.sp
             )
 
             Spacer(modifier = Modifier.height(6.dp))
 
             Text(
-                text = "Tic Tac Toe\ncontra IA",
+                text = "Tic Tac Toe\ncontra Luz",
+                fontFamily = MichiFont,
+                fontSize = 20.sp,
                 color = MaterialTheme.colors.onSecondary
             )
 
