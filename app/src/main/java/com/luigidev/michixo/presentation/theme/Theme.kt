@@ -13,7 +13,7 @@ private val MichiWearColors = Colors(
 
     onPrimary = Color(0xFF4A4A4A),
     onSecondary = MichiSoftBrown,
-    onBackground = MichiTextPrimary,
+    onBackground = MichiOverlay,
     onSurface = MichiTextPrimary
 )
 

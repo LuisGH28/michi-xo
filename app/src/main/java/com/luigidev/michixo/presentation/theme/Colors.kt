@@ -13,5 +13,5 @@ val MichiSoftBrown = Color(0xFF6D4C41)
 
 val MichiAccent = Color(0xFFB76E79)
 
-val MichiOverlay = Color(0xFF1A1A1A)
+val MichiOverlay = Color(0xBDBDBD)
 val MichiTextPrimary = Color(0xFF4A4A4A)
