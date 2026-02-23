@@ -158,7 +158,7 @@ private fun Board(
                         Button(
                             onClick = { onTap(index) },
                             modifier = Modifier
-                                .size(56.dp)
+                                .size(40.dp)
                                 .padding(2.dp),
                             shape = RoundedCornerShape(18.dp),
                             colors = androidx.wear.compose.material.ButtonDefaults.buttonColors(
