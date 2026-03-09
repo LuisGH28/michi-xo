@@ -11,6 +11,9 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/app" />
+            <option value="$PROJECT_DIR$/michixo" />
+            <option value="$PROJECT_DIR$/michixo-core" />
+            <option value="$PROJECT_DIR$/michixo2" />
           </set>
         </option>
       </GradleProjectSettings>

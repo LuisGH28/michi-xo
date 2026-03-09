@@ -21,4 +21,6 @@ dependencyResolutionManagement {
 
 rootProject.name = "Michi XO"
 include(":app")
- 
+include(":michixo")
+include(":michixo2")
+include(":michixo-core")
