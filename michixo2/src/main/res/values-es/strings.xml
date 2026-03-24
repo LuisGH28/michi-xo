@@ -1,0 +1,105 @@
+<resources>
+    <string name="lest_play">Vamos a jugar con Luz</string>
+    <string name="play">Jugar</string>
+    <string name="app_name">MichiXO</string>
+
+    <string name="cd_pets">Patitas</string>
+    <string name="cd_luz_thinking">Luz pensando</string>
+
+    <string name="cat_luz">Gatita Luz</string>
+    <string name="player_2_ai">Jugador 2 (IA)</string>
+
+    <string name="luz_thinking_message">Estoy pensando… miau</string>
+    <string name="luz_observing_message">Te veo, humano</string>
+
+    <string name="status_you_win">• TÚ GANAS</string>
+    <string name="status_luz_wins">• LUZ GANA</string>
+    <string name="status_draw">• EMPATE</string>
+    <string name="status_luz_thinking">• LUZ ESTÁ PENSANDO</string>
+    <string name="status_your_turn">• TU TURNO</string>
+
+    <string name="pause">PAUSA</string>
+    <string name="settings">AJUSTES</string>
+
+    <string name="cd_player_x">Jugador X</string>
+    <string name="cd_player_o">Jugador O</string>
+
+    <string name="cd_luz_bored">Luz aburrida</string>
+
+    <string name="pause_title">Michi XO</string>
+    <string name="pause_subtitle">Luz dice "¿Ya te aburriste?"</string>
+
+    <string name="resume">Continuar</string>
+    <string name="exit_home">Salir al inicio</string>
+
+    <string name="sound_on">Sonido activo</string>
+    <string name="muted">Silenciado</string>
+    <string name="info">Info</string>
+
+    <string name="paused">PAUSADO</string>
+
+    <string name="done">Listo</string>
+    <string name="quick_settings">Ajustes rápidos</string>
+    <string name="music">Música</string>
+
+    <string name="close">Cerrar</string>
+    <string name="about_michi">Acerca de Michi XO</string>
+    <string name="info_you_are_x">• Tú eres X</string>
+    <string name="info_luz_rival">• Luz es tu rival</string>
+    <string name="info_make_three">• Haz 3 en línea para ganar</string>
+    <string name="info_tap_tile">• Toca una casilla para jugar</string>
+    <string name="info_version">• Versión 1.4</string>
+    <string name="info_author">• Hecho por LuigiDev</string>
+
+
+    <string name="back">Atrás</string>
+    <string name="settings_title">Ajustes</string>
+    <string name="cd_luz_settings">Luz en ajustes</string>
+    <string name="settings_subtitle">Ajustes rápidos para Luz</string>
+
+    <string name="music_subtitle">Activa o desactiva la música de fondo</string>
+
+    <string name="vibration">Vibración</string>
+    <string name="vibration_subtitle">Activa la vibración del juego</string>
+
+    <string name="notifications">Notificaciones</string>
+    <string name="notifications_subtitle">Permite notificaciones del juego</string>
+
+    <string name="result_you_win">TÚ GANAS</string>
+    <string name="result_luz_wins">LUZ GANA</string>
+    <string name="result_draw">EMPATE</string>
+
+    <string name="result_msg_you_win">Luz se ve triste miau.</string>
+    <string name="result_msg_luz_wins">¡Soy la reina de este juego, humano!</string>
+    <string name="result_msg_draw">Estuvo cerca, humano.</string>
+
+    <string name="match_result">RESULTADO DE LA PARTIDA</string>
+    <string name="match_result_fallback">Resultado de la partida</string>
+    <string name="good_game_human">Buena partida, humano.</string>
+
+    <string name="cd_result_image">Imagen del resultado</string>
+    <string name="cd_winner">Ganador</string>
+
+    <string name="play_again">Jugar otra vez</string>
+    <string name="view_board">Ver tablero</string>
+    <string name="home">Inicio</string>
+
+    <string name="final_board">Tablero final</string>
+
+    <string name="preview_you_win">¡Tú ganas!</string>
+    <string name="preview_luz_sad">Luz se ve triste miau.</string>
+
+    <string name="language">Idioma</string>
+    <string name="language_subtitle">Elige el idioma de la app</string>
+    <string name="english">Inglés</string>
+    <string name="spanish">Español</string>
+    <string name="system_default">Predeterminado del sistema</string>
+</resources>
+
+
+
+
+
+
+
+

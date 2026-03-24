@@ -3,7 +3,7 @@ package com.luigidev.michixo.mobile.presentation
 import com.luigidev.michixo.model.Player
 
 enum class Screen{
-    HOME, GAME
+    HOME, GAME, RESULT, SETTINGS
 }
 
 data class GameUiState(
@@ -18,5 +18,9 @@ data class GameUiState(
 
     val winner: Player? = null,
     val winLine: List<Int>? = null,
-    val isDraw: Boolean = false
+    val isDraw: Boolean = false,
+
+    val resultTitle: String = "",
+    val resultMessage: String = "",
+    val resultImageRes: Int? = null
 )

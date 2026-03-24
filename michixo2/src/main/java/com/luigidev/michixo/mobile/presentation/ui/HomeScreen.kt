@@ -17,36 +17,48 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.EmojiEvents
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Notifications
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Pets
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.EmojiEvents
-import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.luigidev.michixo.mobile.R
 import com.luigidev.michixo.mobile.presentation.GameViewModel
-import com.luigidev.michixo.mobile.presentation.theme.*
+import com.luigidev.michixo.mobile.presentation.theme.MichiAccent
+import com.luigidev.michixo.mobile.presentation.theme.MichiButton
+import com.luigidev.michixo.mobile.presentation.theme.MichiDeepPink
+import com.luigidev.michixo.mobile.presentation.theme.MichiFont
+import com.luigidev.michixo.mobile.presentation.theme.MichiPink
+import com.luigidev.michixo.mobile.presentation.theme.MichiSoftBrown
+import com.luigidev.michixo.mobile.presentation.theme.MichiSoftPink
+import com.luigidev.michixo.mobile.presentation.theme.MichiTextPrimary
+import com.luigidev.michixo.mobile.presentation.theme.MichiXOTheme
 
 @Composable
 fun HomeScreen(vm: GameViewModel) {
     HomeScreenContent(
         onPlayClick = { vm.startGame() },
-        onSettingsClick = {}
+        onSettingsClick = { vm.goToSettings() }
     )
 }
 
@@ -62,13 +74,11 @@ fun HomeScreenContent(
             .navigationBarsPadding()
             .padding(horizontal = 20.dp, vertical = 14.dp)
     ) {
-
         Column(
             modifier = Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
-            // Header
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -76,18 +86,21 @@ fun HomeScreenContent(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-
                 Row(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-
                     Surface(
                         modifier = Modifier.size(26.dp),
                         shape = CircleShape,
                         color = MichiPink
                     ) {
                         Box(contentAlignment = Alignment.Center) {
-                            Text("🐾", fontSize = 12.sp)
+                            Icon(
+                                imageVector = Icons.Filled.Pets,
+                                contentDescription = "Michi icon",
+                                modifier = Modifier.size(14.dp),
+                                tint = MichiSoftBrown
+                            )
                         }
                     }
 
@@ -107,25 +120,27 @@ fun HomeScreenContent(
                     color = MichiDeepPink
                 ) {
                     Box(contentAlignment = Alignment.Center) {
-                        Text("🔔", fontSize = 11.sp)
+                        Icon(
+                            imageVector = Icons.Filled.Notifications,
+                            contentDescription = stringResource(R.string.notifications),
+                            modifier = Modifier.size(14.dp),
+                            tint = MichiSoftBrown
+                        )
                     }
                 }
             }
 
             Spacer(modifier = Modifier.height(26.dp))
 
-            // Luz Card
             Surface(
                 modifier = Modifier.size(width = 210.dp, height = 250.dp),
                 shape = RoundedCornerShape(25.dp),
                 color = MichiDeepPink
             ) {
-
                 Box(
                     modifier = Modifier.padding(2.dp),
                     contentAlignment = Alignment.Center
                 ) {
-
                     Image(
                         painter = painterResource(id = R.drawable.luz_hs),
                         contentDescription = "Luz",
@@ -149,7 +164,7 @@ fun HomeScreenContent(
             Spacer(modifier = Modifier.height(6.dp))
 
             Text(
-                text = "Let’s play with Luz!",
+                text = stringResource(R.string.lest_play),
                 fontSize = 13.sp,
                 color = MichiTextPrimary,
                 fontWeight = FontWeight.Medium
@@ -157,7 +172,6 @@ fun HomeScreenContent(
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            // Play Button
             Button(
                 onClick = onPlayClick,
                 modifier = Modifier
@@ -169,22 +183,20 @@ fun HomeScreenContent(
                     contentColor = MichiTextPrimary
                 )
             ) {
-
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.Center
                 ) {
-
                     Icon(
                         imageVector = Icons.Filled.PlayArrow,
-                        contentDescription = "Play",
+                        contentDescription = stringResource(R.string.play),
                         modifier = Modifier.size(22.dp)
                     )
 
                     Spacer(modifier = Modifier.width(8.dp))
 
                     Text(
-                        text = "Play Game",
+                        text = stringResource(R.string.play),
                         fontSize = 17.sp,
                         fontWeight = FontWeight.SemiBold
                     )
@@ -197,10 +209,9 @@ fun HomeScreenContent(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-
                 SecondaryButton(
                     modifier = Modifier.weight(1f),
-                    text = "Settings",
+                    text = stringResource(R.string.settings_title),
                     icon = Icons.Filled.Settings,
                     onClick = onSettingsClick
                 )
@@ -208,20 +219,7 @@ fun HomeScreenContent(
 
             Spacer(modifier = Modifier.weight(1f))
 
-            // Bottom Bar
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 4.dp),
-                horizontalArrangement = Arrangement.SpaceEvenly,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
 
-                BottomItem(Icons.Filled.Home, true)
-                BottomItem(Icons.Filled.PlayArrow, false)
-                BottomItem(Icons.Filled.EmojiEvents, false)
-                BottomItem(Icons.Filled.Person, false)
-            }
         }
     }
 }
@@ -233,7 +231,6 @@ private fun SecondaryButton(
     icon: ImageVector,
     onClick: () -> Unit
 ) {
-
     Button(
         onClick = onClick,
         modifier = modifier.height(56.dp),
@@ -243,11 +240,9 @@ private fun SecondaryButton(
             contentColor = MichiSoftBrown
         )
     ) {
-
         Row(
             verticalAlignment = Alignment.CenterVertically
         ) {
-
             Icon(
                 imageVector = icon,
                 contentDescription = text,
@@ -270,7 +265,6 @@ private fun BottomItem(
     icon: ImageVector,
     selected: Boolean
 ) {
-
     Icon(
         imageVector = icon,
         contentDescription = null,
@@ -282,9 +276,7 @@ private fun BottomItem(
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun HomeScreenPreview() {
-
     MichiXOTheme {
-
         HomeScreenContent(
             onPlayClick = {}
         )

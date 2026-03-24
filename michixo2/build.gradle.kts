@@ -8,6 +8,10 @@ android {
     namespace = "com.luigidev.michixo.mobile"
     compileSdk = 36
 
+    androidResources {
+        generateLocaleConfig = true
+    }
+
     defaultConfig {
         applicationId = "com.luigidev.michixo.mobile"
         minSdk = 24
@@ -51,6 +55,7 @@ dependencies {
     implementation(libs.material3)
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0")
     implementation("androidx.compose.material:material-icons-extended")
+    implementation("androidx.appcompat:appcompat:1.7.0")
     implementation(project(":michixo-core"))
     implementation(libs.engage.core)
     testImplementation(libs.junit)
