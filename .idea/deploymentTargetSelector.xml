@@ -18,6 +18,7 @@
       </SelectionState>
       <SelectionState runConfigName="michixo2">
         <option name="selectionMode" value="DROPDOWN" />
+        <DialogSelection />
       </SelectionState>
     </selectionStates>
   </component>

@@ -3,6 +3,7 @@ package com.luigidev.michixo.mobile.presentation
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.luigidev.michixo.mobile.R
+import com.luigidev.michixo.mobile.model.GameResult
 import com.luigidev.michixo.domain.AiPlayer
 import com.luigidev.michixo.domain.GameEngine
 import com.luigidev.michixo.domain.Rules
@@ -21,6 +22,8 @@ class GameViewModel(
     private val _uiState = MutableStateFlow(GameUiState(board = engine.newBoard()))
     val uiState: StateFlow<GameUiState> = _uiState
 
+    var onGameFinished: ((GameResult) -> Unit)? = null
+
     fun setDifficulty(difficulty: Difficulty) {
         _uiState.update { state ->
             state.copy(difficulty = difficulty)
@@ -28,13 +31,16 @@ class GameViewModel(
     }
 
     fun startGame() {
-        val selectedDifficulty = _uiState.value.difficulty
+        val state = _uiState.value
 
         _uiState.value = GameUiState(
             screen = Screen.GAME,
             board = engine.newBoard(),
             currentTurn = Player.X,
-            difficulty = selectedDifficulty,
+            difficulty = state.difficulty,
+            musicEnabled = state.musicEnabled,
+            vibrationEnabled = state.vibrationEnabled,
+            notificationsEnabled = state.notificationsEnabled,
             resultTitle = "",
             resultMessage = "",
             resultImageRes = null
@@ -48,9 +54,13 @@ class GameViewModel(
     }
 
     fun backToHome() {
+        val state = _uiState.value
         _uiState.value = GameUiState(
             screen = Screen.HOME,
-            difficulty = _uiState.value.difficulty
+            difficulty = state.difficulty,
+            musicEnabled = state.musicEnabled,
+            vibrationEnabled = state.vibrationEnabled,
+            notificationsEnabled = state.notificationsEnabled
         )
     }
 
@@ -69,6 +79,14 @@ class GameViewModel(
             val humanDraw = Rules.isDraw(next)
 
             if (humanWin != null || humanDraw) {
+                val result = when {
+                    humanDraw -> GameResult.DRAW
+                    humanWin?.player == Player.X -> GameResult.WIN
+                    else -> GameResult.NONE
+                }
+
+                onGameFinished?.invoke(result)
+
                 return@update state.copy(
                     board = next,
                     winner = humanWin?.player,
@@ -112,6 +130,16 @@ class GameViewModel(
                 val aiWin = Rules.checkWinner(boardAfterAi)
                 val aiDraw = Rules.isDraw(boardAfterAi)
 
+                if (aiWin != null || aiDraw) {
+                    val result = when {
+                        aiDraw -> GameResult.DRAW
+                        aiWin?.player == Player.O -> GameResult.LOSE
+                        else -> GameResult.NONE
+                    }
+
+                    onGameFinished?.invoke(result)
+                }
+
                 state.copy(
                     board = boardAfterAi,
                     winner = aiWin?.player,
@@ -146,5 +174,17 @@ class GameViewModel(
                 resultImageRes = null
             )
         }
+    }
+
+    fun setMusicEnabled(enabled: Boolean) {
+        _uiState.update { it.copy(musicEnabled = enabled) }
+    }
+
+    fun setVibrationEnabled(enabled: Boolean) {
+        _uiState.update { it.copy(vibrationEnabled = enabled) }
+    }
+
+    fun setNotificationsEnabled(enabled: Boolean) {
+        _uiState.update { it.copy(notificationsEnabled = enabled) }
     }
 }

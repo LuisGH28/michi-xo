@@ -25,5 +25,9 @@ data class GameUiState(
 
     val resultTitle: String = "",
     val resultMessage: String = "",
-    val resultImageRes: Int? = null
+    val resultImageRes: Int? = null,
+
+    val musicEnabled: Boolean = true,
+    val vibrationEnabled: Boolean = true,
+    val notificationsEnabled: Boolean = false,
 )

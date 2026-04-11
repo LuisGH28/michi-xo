@@ -64,15 +64,14 @@ import androidx.activity.compose.BackHandler
 @Composable
 fun TicTacToeScreen(
     vm: GameViewModel,
-    onExitApp: () -> Unit) {
+    onExitApp: () -> Unit,
+    onNotificationsToggle: (Boolean) -> Unit
+) {
     val uiState by vm.uiState.collectAsState()
 
     var showPauseDialog by remember { mutableStateOf(false) }
     var showPauseSettingsDialog by remember { mutableStateOf(false) }
     var showInfoDialog by remember { mutableStateOf(false) }
-    var isVolumeEnabled by remember { mutableStateOf(true) }
-    var isVibrationEnabled by remember { mutableStateOf(true) }
-    var isNotificationsEnabled by remember { mutableStateOf(true) }
 
     BackHandler {
         when {
@@ -119,7 +118,7 @@ fun TicTacToeScreen(
 
             if (showPauseDialog) {
                 PauseDialog(
-                    isVolumeEnabled = isVolumeEnabled,
+                    isVolumeEnabled = uiState.musicEnabled,
                     onResume = { showPauseDialog = false },
                     onExitHome = {
                         showPauseDialog = false
@@ -130,7 +129,7 @@ fun TicTacToeScreen(
                         showPauseSettingsDialog = true
                     },
                     onToggleVolume = {
-                        isVolumeEnabled = !isVolumeEnabled
+                        vm.setMusicEnabled(!uiState.musicEnabled)
                     },
                     onOpenInfo = {
                         showPauseDialog = false
@@ -141,11 +140,11 @@ fun TicTacToeScreen(
 
             if (showPauseSettingsDialog) {
                 PauseSettingsDialog(
-                    musicEnabled = isVolumeEnabled,
-                    vibrationEnabled = isVibrationEnabled,
+                    musicEnabled = uiState.musicEnabled,
+                    vibrationEnabled = uiState.vibrationEnabled,
                     onDismiss = { showPauseSettingsDialog = false },
-                    onMusicToggle = { isVolumeEnabled = !isVolumeEnabled },
-                    onVibrationToggle = { isVibrationEnabled = !isVibrationEnabled }
+                    onMusicToggle = { vm.setMusicEnabled(!uiState.musicEnabled) },
+                    onVibrationToggle = { vm.setVibrationEnabled(!uiState.vibrationEnabled) }
                 )
             }
 
@@ -163,12 +162,12 @@ fun TicTacToeScreen(
         )
 
         Screen.SETTINGS -> SettingsScreen(
-            musicEnabled = isVolumeEnabled,
-            vibrationEnabled = isVibrationEnabled,
-            notificationsEnabled = isNotificationsEnabled,
-            onMusicToggle = { isVolumeEnabled = it },
-            onVibrationToggle = { isVibrationEnabled = it },
-            onNotificationsToggle = { isNotificationsEnabled = it },
+            musicEnabled = uiState.musicEnabled,
+            vibrationEnabled = uiState.vibrationEnabled,
+            notificationsEnabled = uiState.notificationsEnabled,
+            onMusicToggle = { vm.setMusicEnabled(it) },
+            onVibrationToggle = { vm.setVibrationEnabled(it) },
+            onNotificationsToggle = onNotificationsToggle,
             onBackClick = { vm.backToHome() }
         )
     }

@@ -112,6 +112,25 @@
 
     <string name="start_game">Jugar</string>
     <string name="cancel">Cancelar</string>
+
+    <string name="notification_title">MichiXO te extraña</string>
+    <string name="notification_body">Luz está esperando otra partida 🐾</string>
+    <string name="notifications_permission_denied">Las notificaciones están desactivadas porque no se concedió el permiso.</string>
+
+    <string name="notification_first_time_title">MichiXO te espera</string>
+    <string name="notification_first_time_body">Luz está lista para jugar contigo por primera vez 🐾</string>
+
+    <string name="notification_miss_you_title">Luz te extraña</string>
+    <string name="notification_miss_you_body">Han pasado varios días. ¿Jugamos otra vez? 🐱</string>
+
+    <string name="notification_win_title">¿Otra victoria?</string>
+    <string name="notification_win_body">Le ganaste a Luz ¿puedes hacerlo otra vez? 😼</string>
+
+    <string name="notification_lose_title">Hora de la revancha</string>
+    <string name="notification_lose_body">Luz quiere desquitarse. ¿Aceptas el reto? 🐾</string>
+
+    <string name="notification_draw_title">Hay que desempatar</string>
+    <string name="notification_draw_body">La última partida quedó empatada ✨</string>
 </resources>
 
 

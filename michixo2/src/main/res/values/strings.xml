@@ -112,4 +112,23 @@
 
     <string name="start_game">Start game</string>
     <string name="cancel">Cancel</string>
+
+    <string name="notification_title">MichiXO misses you</string>
+    <string name="notification_body">Luz is waiting for another match 🐾</string>
+    <string name="notifications_permission_denied">Notifications are disabled because permission was denied.</string>
+
+    <string name="notification_first_time_title">MichiXO is waiting for you</string>
+    <string name="notification_first_time_body">Luz is ready to play with you for the first time 🐾</string>
+
+    <string name="notification_miss_you_title">Luz misses you</string>
+    <string name="notification_miss_you_body">It’s been a few days. Want to play again? 🐱</string>
+
+    <string name="notification_win_title">Another victory?</string>
+    <string name="notification_win_body">You beat Luz… can you do it again? 😼</string>
+
+    <string name="notification_lose_title">Time for a rematch</string>
+    <string name="notification_lose_body">Luz wants revenge. Do you accept the challenge? 🐾</string>
+
+    <string name="notification_draw_title">Let’s break the tie</string>
+    <string name="notification_draw_body">The last match ended in a draw ✨</string>
 </resources>
