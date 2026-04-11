@@ -17,10 +17,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.EmojiEvents
-import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Notifications
-import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Pets
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Settings
@@ -30,13 +27,17 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -44,7 +45,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.luigidev.michixo.mobile.R
 import com.luigidev.michixo.mobile.presentation.GameViewModel
-import com.luigidev.michixo.mobile.presentation.theme.MichiAccent
 import com.luigidev.michixo.mobile.presentation.theme.MichiButton
 import com.luigidev.michixo.mobile.presentation.theme.MichiDeepPink
 import com.luigidev.michixo.mobile.presentation.theme.MichiFont
@@ -53,13 +53,29 @@ import com.luigidev.michixo.mobile.presentation.theme.MichiSoftBrown
 import com.luigidev.michixo.mobile.presentation.theme.MichiSoftPink
 import com.luigidev.michixo.mobile.presentation.theme.MichiTextPrimary
 import com.luigidev.michixo.mobile.presentation.theme.MichiXOTheme
+import com.luigidev.michixo_core.model.Difficulty
 
 @Composable
 fun HomeScreen(vm: GameViewModel) {
+    var showDifficultyDialog by remember { mutableStateOf(false) }
+    val uiState by vm.uiState.collectAsState()
+
     HomeScreenContent(
-        onPlayClick = { vm.startGame() },
+        onPlayClick = { showDifficultyDialog = true },
         onSettingsClick = { vm.goToSettings() }
     )
+
+    if (showDifficultyDialog) {
+        DifficultyDialog(
+            selectedDifficulty = uiState.difficulty,
+            onDismiss = { showDifficultyDialog = false },
+            onConfirm = { difficulty ->
+                vm.setDifficulty(difficulty)
+                showDifficultyDialog = false
+                vm.startGame()
+            }
+        )
+    }
 }
 
 @Composable
@@ -97,7 +113,7 @@ fun HomeScreenContent(
                         Box(contentAlignment = Alignment.Center) {
                             Icon(
                                 imageVector = Icons.Filled.Pets,
-                                contentDescription = "Michi icon",
+                                contentDescription = stringResource(R.string.michi_icon),
                                 modifier = Modifier.size(14.dp),
                                 tint = MichiSoftBrown
                             )
@@ -143,7 +159,7 @@ fun HomeScreenContent(
                 ) {
                     Image(
                         painter = painterResource(id = R.drawable.luz_hs),
-                        contentDescription = "Luz",
+                        contentDescription = stringResource(R.string.luz_image),
                         modifier = Modifier
                             .fillMaxSize()
                             .clip(RoundedCornerShape(22.dp)),
@@ -218,8 +234,6 @@ fun HomeScreenContent(
             }
 
             Spacer(modifier = Modifier.weight(1f))
-
-
         }
     }
 }
@@ -258,19 +272,6 @@ private fun SecondaryButton(
             )
         }
     }
-}
-
-@Composable
-private fun BottomItem(
-    icon: ImageVector,
-    selected: Boolean
-) {
-    Icon(
-        imageVector = icon,
-        contentDescription = null,
-        modifier = Modifier.size(22.dp),
-        tint = if (selected) MichiAccent else MichiTextPrimary
-    )
 }
 
 @Preview(showBackground = true, showSystemUi = true)

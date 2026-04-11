@@ -94,6 +94,24 @@
     <string name="english">Inglés</string>
     <string name="spanish">Español</string>
     <string name="system_default">Predeterminado del sistema</string>
+
+    <string name="michi_icon">Icono de michi</string>
+    <string name="luz_image">Luz</string>
+
+    <string name="difficulty_dialog_title">Selecciona la dificultad</string>
+    <string name="difficulty_dialog_subtitle">¿Qué tan lista quieres que esté Luz hoy?</string>
+
+    <string name="difficulty_easy">Fácil</string>
+    <string name="difficulty_easy_desc">Luz juega relajada</string>
+
+    <string name="difficulty_medium">Media</string>
+    <string name="difficulty_medium_desc">Luz piensa un poco más</string>
+
+    <string name="difficulty_hard">Difícil</string>
+    <string name="difficulty_hard_desc">Luz juega casi perfecto</string>
+
+    <string name="start_game">Jugar</string>
+    <string name="cancel">Cancelar</string>
 </resources>
 
 

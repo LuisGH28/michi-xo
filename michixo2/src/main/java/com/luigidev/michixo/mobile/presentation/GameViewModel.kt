@@ -7,6 +7,7 @@ import com.luigidev.michixo.domain.AiPlayer
 import com.luigidev.michixo.domain.GameEngine
 import com.luigidev.michixo.domain.Rules
 import com.luigidev.michixo.model.Player
+import com.luigidev.michixo_core.model.Difficulty
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -20,13 +21,20 @@ class GameViewModel(
     private val _uiState = MutableStateFlow(GameUiState(board = engine.newBoard()))
     val uiState: StateFlow<GameUiState> = _uiState
 
-    private val ai = AiPlayer()
+    fun setDifficulty(difficulty: Difficulty) {
+        _uiState.update { state ->
+            state.copy(difficulty = difficulty)
+        }
+    }
 
     fun startGame() {
+        val selectedDifficulty = _uiState.value.difficulty
+
         _uiState.value = GameUiState(
             screen = Screen.GAME,
             board = engine.newBoard(),
             currentTurn = Player.X,
+            difficulty = selectedDifficulty,
             resultTitle = "",
             resultMessage = "",
             resultImageRes = null
@@ -40,7 +48,10 @@ class GameViewModel(
     }
 
     fun backToHome() {
-        _uiState.value = GameUiState(screen = Screen.HOME)
+        _uiState.value = GameUiState(
+            screen = Screen.HOME,
+            difficulty = _uiState.value.difficulty
+        )
     }
 
     fun onCellTap(index: Int) {
@@ -93,6 +104,7 @@ class GameViewModel(
             _uiState.update { state ->
                 if (state.winner != null || state.isDraw) return@update state
 
+                val ai = AiPlayer(state.difficulty)
                 val aiMove = ai.chooseMove(baseBoard, Player.O)
                     ?: return@update state.copy(isAiThinking = false)
 

@@ -1,6 +1,7 @@
 package com.luigidev.michixo.mobile.presentation
 
 import com.luigidev.michixo.model.Player
+import com.luigidev.michixo_core.model.Difficulty
 
 enum class Screen{
     HOME, GAME, RESULT, SETTINGS
@@ -15,6 +16,8 @@ data class GameUiState(
 
     val currentTurn: Player = Player.X,
     val isAiThinking: Boolean = false,
+
+    val difficulty: Difficulty = Difficulty.EASY,
 
     val winner: Player? = null,
     val winLine: List<Int>? = null,
