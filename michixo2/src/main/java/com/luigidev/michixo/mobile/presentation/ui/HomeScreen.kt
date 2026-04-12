@@ -17,7 +17,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Pets
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Settings
@@ -53,7 +52,6 @@ import com.luigidev.michixo.mobile.presentation.theme.MichiSoftBrown
 import com.luigidev.michixo.mobile.presentation.theme.MichiSoftPink
 import com.luigidev.michixo.mobile.presentation.theme.MichiTextPrimary
 import com.luigidev.michixo.mobile.presentation.theme.MichiXOTheme
-import com.luigidev.michixo_core.model.Difficulty
 
 @Composable
 fun HomeScreen(vm: GameViewModel) {
@@ -91,16 +89,13 @@ fun HomeScreenContent(
             .padding(horizontal = 20.dp, vertical = 14.dp)
     ) {
         Column(
-            modifier = Modifier.fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally
+            modifier = Modifier.fillMaxSize()
         ) {
-
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 6.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
+                verticalAlignment = Alignment.CenterVertically
             ) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically
@@ -131,94 +126,98 @@ fun HomeScreenContent(
                 }
             }
 
-            Spacer(modifier = Modifier.height(26.dp))
-
-            Surface(
-                modifier = Modifier.size(width = 210.dp, height = 250.dp),
-                shape = RoundedCornerShape(25.dp),
-                color = MichiDeepPink
-            ) {
-                Box(
-                    modifier = Modifier.padding(2.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.luz_hs),
-                        contentDescription = stringResource(R.string.luz_image),
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .clip(RoundedCornerShape(22.dp)),
-                        contentScale = ContentScale.Crop
-                    )
-                }
-            }
-
-            Spacer(modifier = Modifier.height(18.dp))
-
-            Text(
-                text = "MichiXO",
-                fontFamily = MichiFont,
-                fontSize = 40.sp,
-                color = MichiSoftBrown
-            )
-
-            Spacer(modifier = Modifier.height(6.dp))
-
-            Text(
-                text = stringResource(R.string.lest_play),
-                fontSize = 13.sp,
-                color = MichiTextPrimary,
-                fontWeight = FontWeight.Medium
-            )
-
-            Spacer(modifier = Modifier.height(24.dp))
-
-            Button(
-                onClick = onPlayClick,
+            Column(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .height(56.dp),
-                shape = RoundedCornerShape(30.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = MichiButton,
-                    contentColor = MichiTextPrimary
-                )
+                    .fillMaxSize()
+                    .weight(1f),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
             ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center
+                Surface(
+                    modifier = Modifier.size(width = 210.dp, height = 250.dp),
+                    shape = RoundedCornerShape(25.dp),
+                    color = MichiDeepPink
                 ) {
-                    Icon(
-                        imageVector = Icons.Filled.PlayArrow,
-                        contentDescription = stringResource(R.string.play),
-                        modifier = Modifier.size(22.dp)
+                    Box(
+                        modifier = Modifier.padding(2.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Image(
+                            painter = painterResource(id = R.drawable.luz_hs),
+                            contentDescription = stringResource(R.string.luz_image),
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .clip(RoundedCornerShape(22.dp)),
+                            contentScale = ContentScale.Crop
+                        )
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(18.dp))
+
+                Text(
+                    text = "MichiXO",
+                    fontFamily = MichiFont,
+                    fontSize = 40.sp,
+                    color = MichiSoftBrown
+                )
+
+                Spacer(modifier = Modifier.height(6.dp))
+
+                Text(
+                    text = stringResource(R.string.lest_play),
+                    fontSize = 13.sp,
+                    color = MichiTextPrimary,
+                    fontWeight = FontWeight.Medium
+                )
+
+                Spacer(modifier = Modifier.height(24.dp))
+
+                Button(
+                    onClick = onPlayClick,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(56.dp),
+                    shape = RoundedCornerShape(30.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MichiButton,
+                        contentColor = MichiTextPrimary
                     )
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.PlayArrow,
+                            contentDescription = stringResource(R.string.play),
+                            modifier = Modifier.size(22.dp)
+                        )
 
-                    Spacer(modifier = Modifier.width(8.dp))
+                        Spacer(modifier = Modifier.width(8.dp))
 
-                    Text(
-                        text = stringResource(R.string.play),
-                        fontSize = 17.sp,
-                        fontWeight = FontWeight.SemiBold
+                        Text(
+                            text = stringResource(R.string.play),
+                            fontSize = 17.sp,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    SecondaryButton(
+                        modifier = Modifier.weight(1f),
+                        text = stringResource(R.string.settings_title),
+                        icon = Icons.Filled.Settings,
+                        onClick = onSettingsClick
                     )
                 }
             }
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                SecondaryButton(
-                    modifier = Modifier.weight(1f),
-                    text = stringResource(R.string.settings_title),
-                    icon = Icons.Filled.Settings,
-                    onClick = onSettingsClick
-                )
-            }
-
-            Spacer(modifier = Modifier.weight(1f))
         }
     }
 }
