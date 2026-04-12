@@ -60,6 +60,9 @@ import com.luigidev.michixo.mobile.presentation.theme.MichiWhite
 import com.luigidev.michixo.mobile.presentation.theme.MichiXOTheme
 import com.luigidev.michixo.model.Player
 import androidx.activity.compose.BackHandler
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.platform.LocalContext
+import com.luigidev.michixo.mobile.presentation.util.VibrationHelper
 
 @Composable
 fun TicTacToeScreen(
@@ -68,10 +71,27 @@ fun TicTacToeScreen(
     onNotificationsToggle: (Boolean) -> Unit
 ) {
     val uiState by vm.uiState.collectAsState()
+    val context = LocalContext.current
 
     var showPauseDialog by remember { mutableStateOf(false) }
     var showPauseSettingsDialog by remember { mutableStateOf(false) }
     var showInfoDialog by remember { mutableStateOf(false) }
+
+    LaunchedEffect(uiState.winner, uiState.isDraw, uiState.screen) {
+        if (uiState.screen == Screen.RESULT && uiState.vibrationEnabled) {
+            when {
+                uiState.winner == Player.X -> {
+                    VibrationHelper.vibrate(context, 90)
+                }
+                uiState.winner == Player.O -> {
+                    VibrationHelper.vibrate(context, 180)
+                }
+                uiState.isDraw -> {
+                    VibrationHelper.vibrate(context, 70)
+                }
+            }
+        }
+    }
 
     BackHandler {
         when {
@@ -111,7 +131,12 @@ fun TicTacToeScreen(
         Screen.GAME -> {
             GameScreen(
                 uiState = uiState,
-                onCellTap = vm::onCellTap,
+                onCellTap = { index ->
+                    if (uiState.vibrationEnabled) {
+                        VibrationHelper.vibrate(context, 50)
+                    }
+                    vm.onCellTap(index)
+                },
                 onPauseClick = { showPauseDialog = true },
                 onSettingsClick = { showPauseSettingsDialog = true }
             )
