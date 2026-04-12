@@ -24,6 +24,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Pets
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.SmartToy
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
@@ -49,6 +50,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.luigidev.michixo.mobile.R
+import com.luigidev.michixo.mobile.presentation.GameMode
 import com.luigidev.michixo.mobile.presentation.GameViewModel
 import com.luigidev.michixo.mobile.presentation.theme.MichiButton
 import com.luigidev.michixo.mobile.presentation.theme.MichiDeepPink
@@ -65,7 +67,14 @@ fun HomeScreen(vm: GameViewModel) {
     val uiState by vm.uiState.collectAsState()
 
     HomeScreenContent(
-        onPlayClick = { showDifficultyDialog = true },
+        onPlayClick = {
+            vm.setGameMode(GameMode.HUMAN_VS_AI)
+            showDifficultyDialog = true
+        },
+        onAiVsAiClick = {
+            vm.setGameMode(GameMode.AI_VS_AI_REMOTE)
+            showDifficultyDialog = true
+        },
         onSettingsClick = { vm.goToSettings() }
     )
 
@@ -85,6 +94,7 @@ fun HomeScreen(vm: GameViewModel) {
 @Composable
 fun HomeScreenContent(
     onPlayClick: () -> Unit,
+    onAiVsAiClick: () -> Unit,
     onSettingsClick: () -> Unit = {}
 ) {
     var startAnimation by remember { mutableStateOf(false) }
@@ -162,15 +172,27 @@ fun HomeScreenContent(
         label = "playButtonScale"
     )
 
+    val aiVsAiAlpha by animateFloatAsState(
+        targetValue = if (startAnimation) 1f else 0f,
+        animationSpec = tween(durationMillis = 600, delayMillis = 500),
+        label = "aiVsAiAlpha"
+    )
+
+    val aiVsAiOffsetY by animateFloatAsState(
+        targetValue = if (startAnimation) 0f else 50f,
+        animationSpec = tween(durationMillis = 600, delayMillis = 500),
+        label = "aiVsAiOffsetY"
+    )
+
     val settingsAlpha by animateFloatAsState(
         targetValue = if (startAnimation) 1f else 0f,
-        animationSpec = tween(durationMillis = 600, delayMillis = 520),
+        animationSpec = tween(durationMillis = 600, delayMillis = 570),
         label = "settingsAlpha"
     )
 
     val settingsOffsetY by animateFloatAsState(
         targetValue = if (startAnimation) 0f else 50f,
-        animationSpec = tween(durationMillis = 600, delayMillis = 520),
+        animationSpec = tween(durationMillis = 600, delayMillis = 570),
         label = "settingsOffsetY"
     )
 
@@ -322,6 +344,43 @@ fun HomeScreenContent(
 
                 Spacer(modifier = Modifier.height(12.dp))
 
+                Button(
+                    onClick = onAiVsAiClick,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(56.dp)
+                        .graphicsLayer {
+                            alpha = aiVsAiAlpha
+                            translationY = aiVsAiOffsetY
+                        },
+                    shape = RoundedCornerShape(30.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MichiDeepPink,
+                        contentColor = MichiSoftBrown
+                    )
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.SmartToy,
+                            contentDescription = "AI vs AI",
+                            modifier = Modifier.size(22.dp)
+                        )
+
+                        Spacer(modifier = Modifier.width(8.dp))
+
+                        Text(
+                            text = "AI vs AI",
+                            fontSize = 17.sp,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(12.dp))
+
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -385,6 +444,7 @@ fun HomeScreenPreview() {
     MichiXOTheme {
         HomeScreenContent(
             onPlayClick = {},
+            onAiVsAiClick = {},
             onSettingsClick = {}
         )
     }

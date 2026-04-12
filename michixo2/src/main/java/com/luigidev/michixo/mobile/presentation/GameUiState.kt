@@ -3,7 +3,7 @@ package com.luigidev.michixo.mobile.presentation
 import com.luigidev.michixo.model.Player
 import com.luigidev.michixo_core.model.Difficulty
 
-enum class Screen{
+enum class Screen {
     HOME, GAME, RESULT, SETTINGS
 }
 
@@ -18,6 +18,14 @@ data class GameUiState(
     val isAiThinking: Boolean = false,
 
     val difficulty: Difficulty = Difficulty.EASY,
+    val gameMode: GameMode = GameMode.HUMAN_VS_AI,
+
+    val musicEnabled: Boolean = true,
+    val vibrationEnabled: Boolean = true,
+    val notificationsEnabled: Boolean = false,
+
+    val remoteAiConnected: Boolean = false,
+    val remoteAiStatus: String = "",
 
     val winner: Player? = null,
     val winLine: List<Int>? = null,
@@ -25,9 +33,5 @@ data class GameUiState(
 
     val resultTitle: String = "",
     val resultMessage: String = "",
-    val resultImageRes: Int? = null,
-
-    val musicEnabled: Boolean = true,
-    val vibrationEnabled: Boolean = true,
-    val notificationsEnabled: Boolean = false,
+    val resultImageRes: Int? = null
 )

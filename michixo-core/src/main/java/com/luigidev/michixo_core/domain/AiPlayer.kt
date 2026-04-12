@@ -30,20 +30,34 @@ class AiPlayer(
         findWinningMove(board, ai)?.let { return it }
         findWinningMove(board, opponent)?.let { return it }
 
+        val empty = emptyCells(board)
+
+        // Apertura variable: centro o esquinas
+        if (empty.size == 9) {
+            val openingMoves = listOf(4, 0, 2, 6, 8)
+            return openingMoves.random()
+        }
+
         if (board[4] == Player.NONE) return 4
 
         val corners = listOf(0, 2, 6, 8).filter { board[it] == Player.NONE }
         if (corners.isNotEmpty()) return corners.random()
 
-        return emptyCells(board).randomOrNull()
+        return empty.randomOrNull()
     }
 
     private fun chooseHardMove(board: List<Player>, ai: Player): Int? {
         val human = opponentOf(ai)
         val empty = emptyCells(board)
 
+        // Apertura variable: centro o esquinas
+        if (empty.size == 9) {
+            val openingMoves = listOf(4, 0, 2, 6, 8)
+            return openingMoves.random()
+        }
+
         var bestScore = Int.MIN_VALUE
-        var bestMove: Int? = null
+        val bestMoves = mutableListOf<Int>()
 
         for (move in empty) {
             val newBoard = board.toMutableList()
@@ -59,13 +73,19 @@ class AiPlayer(
                 beta = Int.MAX_VALUE
             )
 
-            if (score > bestScore) {
-                bestScore = score
-                bestMove = move
+            when {
+                score > bestScore -> {
+                    bestScore = score
+                    bestMoves.clear()
+                    bestMoves.add(move)
+                }
+                score == bestScore -> {
+                    bestMoves.add(move)
+                }
             }
         }
 
-        return bestMove
+        return prioritizeBestMove(bestMoves)
     }
 
     private fun minimax(
@@ -92,7 +112,15 @@ class AiPlayer(
             for (i in board.indices) {
                 if (board[i] == Player.NONE) {
                     board[i] = ai
-                    val score = minimax(board, depth + 1, false, ai, human, localAlpha, localBeta)
+                    val score = minimax(
+                        board = board,
+                        depth = depth + 1,
+                        isMaximizing = false,
+                        ai = ai,
+                        human = human,
+                        alpha = localAlpha,
+                        beta = localBeta
+                    )
                     board[i] = Player.NONE
 
                     bestScore = maxOf(bestScore, score)
@@ -108,7 +136,15 @@ class AiPlayer(
             for (i in board.indices) {
                 if (board[i] == Player.NONE) {
                     board[i] = human
-                    val score = minimax(board, depth + 1, true, ai, human, localAlpha, localBeta)
+                    val score = minimax(
+                        board = board,
+                        depth = depth + 1,
+                        isMaximizing = true,
+                        ai = ai,
+                        human = human,
+                        alpha = localAlpha,
+                        beta = localBeta
+                    )
                     board[i] = Player.NONE
 
                     bestScore = minOf(bestScore, score)
@@ -138,6 +174,15 @@ class AiPlayer(
         return board.withIndex()
             .filter { it.value == Player.NONE }
             .map { it.index }
+    }
+
+    private fun prioritizeBestMove(moves: List<Int>): Int? {
+        return when {
+            4 in moves -> 4
+            moves.any { it in listOf(0, 2, 6, 8) } ->
+                moves.first { it in listOf(0, 2, 6, 8) }
+            else -> moves.firstOrNull()
+        }
     }
 
     private fun opponentOf(player: Player): Player {
