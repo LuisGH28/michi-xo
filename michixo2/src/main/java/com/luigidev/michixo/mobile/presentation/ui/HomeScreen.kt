@@ -129,21 +129,6 @@ fun HomeScreenContent(
                         color = MichiSoftBrown
                     )
                 }
-
-                Surface(
-                    modifier = Modifier.size(26.dp),
-                    shape = CircleShape,
-                    color = MichiDeepPink
-                ) {
-                    Box(contentAlignment = Alignment.Center) {
-                        Icon(
-                            imageVector = Icons.Filled.Notifications,
-                            contentDescription = stringResource(R.string.notifications),
-                            modifier = Modifier.size(14.dp),
-                            tint = MichiSoftBrown
-                        )
-                    }
-                }
             }
 
             Spacer(modifier = Modifier.height(26.dp))

@@ -8,13 +8,17 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.luigidev.michixo.mobile.audio.MusicManager
 import com.luigidev.michixo.mobile.data.UserBehaviorStore
 import com.luigidev.michixo.mobile.notifications.NotificationHelper
 import com.luigidev.michixo.mobile.notifications.NotificationScheduler
 import com.luigidev.michixo.mobile.presentation.GameViewModel
+import com.luigidev.michixo.mobile.presentation.Screen
 import com.luigidev.michixo.mobile.presentation.theme.MichiXOTheme
 
 class MainActivity : AppCompatActivity() {
@@ -28,10 +32,19 @@ class MainActivity : AppCompatActivity() {
             MichiXOTheme {
                 val vm: GameViewModel = viewModel()
                 val context = LocalContext.current
+                val uiState = vm.uiState.collectAsStateWithLifecycle().value
                 val behaviorStore = UserBehaviorStore(context)
 
                 vm.onGameFinished = { result ->
                     behaviorStore.saveGamePlayed(result)
+                }
+
+                LaunchedEffect(uiState.musicEnabled, uiState.screen) {
+                    if (uiState.musicEnabled && uiState.screen == Screen.GAME) {
+                        MusicManager.start(context)
+                    } else {
+                        MusicManager.pause()
+                    }
                 }
 
                 val notificationPermissionLauncher = rememberLauncherForActivityResult(
@@ -76,5 +89,10 @@ class MainActivity : AppCompatActivity() {
                 )
             }
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        MusicManager.stop()
     }
 }
