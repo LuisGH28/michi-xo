@@ -1,5 +1,16 @@
 package com.luigidev.michixo.mobile.presentation.ui
 
+import androidx.activity.compose.BackHandler
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.ContentTransform
+import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.slideOutVertically
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -27,6 +38,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -36,8 +48,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -58,12 +70,10 @@ import com.luigidev.michixo.mobile.presentation.theme.MichiSoftPink
 import com.luigidev.michixo.mobile.presentation.theme.MichiTextPrimary
 import com.luigidev.michixo.mobile.presentation.theme.MichiWhite
 import com.luigidev.michixo.mobile.presentation.theme.MichiXOTheme
-import com.luigidev.michixo.model.Player
-import androidx.activity.compose.BackHandler
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.ui.platform.LocalContext
 import com.luigidev.michixo.mobile.presentation.util.VibrationHelper
+import com.luigidev.michixo.model.Player
 
+@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun TicTacToeScreen(
     vm: GameViewModel,
@@ -125,76 +135,109 @@ fun TicTacToeScreen(
         }
     }
 
-    when (uiState.screen) {
-        Screen.HOME -> HomeScreen(vm)
+    AnimatedContent(
+        targetState = uiState.screen,
+        transitionSpec = {
+            screenTransition(targetState)
+        },
+        label = "screen_transition"
+    ) { screen ->
+        when (screen) {
+            Screen.HOME -> HomeScreen(vm)
 
-        Screen.GAME -> {
-            GameScreen(
+            Screen.GAME -> {
+                GameScreen(
+                    uiState = uiState,
+                    onCellTap = { index ->
+                        if (uiState.vibrationEnabled) {
+                            VibrationHelper.vibrate(context, 50)
+                        }
+                        vm.onCellTap(index)
+                    },
+                    onPauseClick = { showPauseDialog = true },
+                    onSettingsClick = { showPauseSettingsDialog = true }
+                )
+
+                if (showPauseDialog) {
+                    PauseDialog(
+                        isVolumeEnabled = uiState.musicEnabled,
+                        onResume = { showPauseDialog = false },
+                        onExitHome = {
+                            showPauseDialog = false
+                            vm.backToHome()
+                        },
+                        onOpenSettings = {
+                            showPauseDialog = false
+                            showPauseSettingsDialog = true
+                        },
+                        onToggleVolume = {
+                            vm.setMusicEnabled(!uiState.musicEnabled)
+                        },
+                        onOpenInfo = {
+                            showPauseDialog = false
+                            showInfoDialog = true
+                        }
+                    )
+                }
+
+                if (showPauseSettingsDialog) {
+                    PauseSettingsDialog(
+                        musicEnabled = uiState.musicEnabled,
+                        vibrationEnabled = uiState.vibrationEnabled,
+                        onDismiss = { showPauseSettingsDialog = false },
+                        onMusicToggle = { vm.setMusicEnabled(!uiState.musicEnabled) },
+                        onVibrationToggle = { vm.setVibrationEnabled(!uiState.vibrationEnabled) }
+                    )
+                }
+
+                if (showInfoDialog) {
+                    PauseInfoDialog(
+                        onDismiss = { showInfoDialog = false }
+                    )
+                }
+            }
+
+            Screen.RESULT -> ResultScreen(
                 uiState = uiState,
-                onCellTap = { index ->
-                    if (uiState.vibrationEnabled) {
-                        VibrationHelper.vibrate(context, 50)
-                    }
-                    vm.onCellTap(index)
-                },
-                onPauseClick = { showPauseDialog = true },
-                onSettingsClick = { showPauseSettingsDialog = true }
+                onPlayAgain = { vm.startGame() },
+                onHome = { vm.backToHome() }
             )
 
-            if (showPauseDialog) {
-                PauseDialog(
-                    isVolumeEnabled = uiState.musicEnabled,
-                    onResume = { showPauseDialog = false },
-                    onExitHome = {
-                        showPauseDialog = false
-                        vm.backToHome()
-                    },
-                    onOpenSettings = {
-                        showPauseDialog = false
-                        showPauseSettingsDialog = true
-                    },
-                    onToggleVolume = {
-                        vm.setMusicEnabled(!uiState.musicEnabled)
-                    },
-                    onOpenInfo = {
-                        showPauseDialog = false
-                        showInfoDialog = true
-                    }
-                )
-            }
+            Screen.SETTINGS -> SettingsScreen(
+                musicEnabled = uiState.musicEnabled,
+                vibrationEnabled = uiState.vibrationEnabled,
+                notificationsEnabled = uiState.notificationsEnabled,
+                onMusicToggle = { vm.setMusicEnabled(it) },
+                onVibrationToggle = { vm.setVibrationEnabled(it) },
+                onNotificationsToggle = onNotificationsToggle,
+                onBackClick = { vm.backToHome() }
+            )
+        }
+    }
+}
 
-            if (showPauseSettingsDialog) {
-                PauseSettingsDialog(
-                    musicEnabled = uiState.musicEnabled,
-                    vibrationEnabled = uiState.vibrationEnabled,
-                    onDismiss = { showPauseSettingsDialog = false },
-                    onMusicToggle = { vm.setMusicEnabled(!uiState.musicEnabled) },
-                    onVibrationToggle = { vm.setVibrationEnabled(!uiState.vibrationEnabled) }
-                )
-            }
-
-            if (showInfoDialog) {
-                PauseInfoDialog(
-                    onDismiss = { showInfoDialog = false }
-                )
-            }
+@OptIn(ExperimentalAnimationApi::class)
+private fun screenTransition(target: Screen): ContentTransform {
+    return when (target) {
+        Screen.GAME -> {
+            (fadeIn() + slideInHorizontally(initialOffsetX = { it / 3 })) togetherWith
+                    (fadeOut() + slideOutHorizontally(targetOffsetX = { -it / 5 }))
         }
 
-        Screen.RESULT -> ResultScreen(
-            uiState = uiState,
-            onPlayAgain = { vm.startGame() },
-            onHome = { vm.backToHome() }
-        )
+        Screen.RESULT -> {
+            (fadeIn() + slideInVertically(initialOffsetY = { it / 5 })) togetherWith
+                    (fadeOut() + slideOutVertically(targetOffsetY = { -it / 6 }))
+        }
 
-        Screen.SETTINGS -> SettingsScreen(
-            musicEnabled = uiState.musicEnabled,
-            vibrationEnabled = uiState.vibrationEnabled,
-            notificationsEnabled = uiState.notificationsEnabled,
-            onMusicToggle = { vm.setMusicEnabled(it) },
-            onVibrationToggle = { vm.setVibrationEnabled(it) },
-            onNotificationsToggle = onNotificationsToggle,
-            onBackClick = { vm.backToHome() }
-        )
+        Screen.SETTINGS -> {
+            (fadeIn() + slideInHorizontally(initialOffsetX = { it / 4 })) togetherWith
+                    (fadeOut() + slideOutHorizontally(targetOffsetX = { -it / 6 }))
+        }
+
+        Screen.HOME -> {
+            (fadeIn() + slideInHorizontally(initialOffsetX = { -it / 4 })) togetherWith
+                    (fadeOut() + slideOutHorizontally(targetOffsetX = { it / 6 }))
+        }
     }
 }
 

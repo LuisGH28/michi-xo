@@ -1,5 +1,9 @@
 package com.luigidev.michixo.mobile.presentation.ui
 
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -26,6 +30,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -34,6 +39,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -81,6 +87,93 @@ fun HomeScreenContent(
     onPlayClick: () -> Unit,
     onSettingsClick: () -> Unit = {}
 ) {
+    var startAnimation by remember { mutableStateOf(false) }
+
+    LaunchedEffect(Unit) {
+        startAnimation = true
+    }
+
+    val headerAlpha by animateFloatAsState(
+        targetValue = if (startAnimation) 1f else 0f,
+        animationSpec = tween(durationMillis = 500),
+        label = "headerAlpha"
+    )
+
+    val headerOffsetY by animateFloatAsState(
+        targetValue = if (startAnimation) 0f else -30f,
+        animationSpec = tween(durationMillis = 500),
+        label = "headerOffsetY"
+    )
+
+    val imageAlpha by animateFloatAsState(
+        targetValue = if (startAnimation) 1f else 0f,
+        animationSpec = tween(durationMillis = 700, delayMillis = 120),
+        label = "imageAlpha"
+    )
+
+    val imageOffsetY by animateFloatAsState(
+        targetValue = if (startAnimation) 0f else 80f,
+        animationSpec = tween(durationMillis = 700, delayMillis = 120),
+        label = "imageOffsetY"
+    )
+
+    val titleAlpha by animateFloatAsState(
+        targetValue = if (startAnimation) 1f else 0f,
+        animationSpec = tween(durationMillis = 550, delayMillis = 260),
+        label = "titleAlpha"
+    )
+
+    val titleOffsetY by animateFloatAsState(
+        targetValue = if (startAnimation) 0f else 30f,
+        animationSpec = tween(durationMillis = 550, delayMillis = 260),
+        label = "titleOffsetY"
+    )
+
+    val subtitleAlpha by animateFloatAsState(
+        targetValue = if (startAnimation) 1f else 0f,
+        animationSpec = tween(durationMillis = 550, delayMillis = 340),
+        label = "subtitleAlpha"
+    )
+
+    val subtitleOffsetY by animateFloatAsState(
+        targetValue = if (startAnimation) 0f else 24f,
+        animationSpec = tween(durationMillis = 550, delayMillis = 340),
+        label = "subtitleOffsetY"
+    )
+
+    val playButtonAlpha by animateFloatAsState(
+        targetValue = if (startAnimation) 1f else 0f,
+        animationSpec = tween(durationMillis = 600, delayMillis = 430),
+        label = "playButtonAlpha"
+    )
+
+    val playButtonOffsetY by animateFloatAsState(
+        targetValue = if (startAnimation) 0f else 50f,
+        animationSpec = tween(durationMillis = 600, delayMillis = 430),
+        label = "playButtonOffsetY"
+    )
+
+    val playButtonScale by animateFloatAsState(
+        targetValue = if (startAnimation) 1f else 0.88f,
+        animationSpec = spring(
+            dampingRatio = Spring.DampingRatioMediumBouncy,
+            stiffness = Spring.StiffnessLow
+        ),
+        label = "playButtonScale"
+    )
+
+    val settingsAlpha by animateFloatAsState(
+        targetValue = if (startAnimation) 1f else 0f,
+        animationSpec = tween(durationMillis = 600, delayMillis = 520),
+        label = "settingsAlpha"
+    )
+
+    val settingsOffsetY by animateFloatAsState(
+        targetValue = if (startAnimation) 0f else 50f,
+        animationSpec = tween(durationMillis = 600, delayMillis = 520),
+        label = "settingsOffsetY"
+    )
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -94,7 +187,11 @@ fun HomeScreenContent(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 6.dp),
+                    .padding(top = 6.dp)
+                    .graphicsLayer {
+                        alpha = headerAlpha
+                        translationY = headerOffsetY
+                    },
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Row(
@@ -134,7 +231,12 @@ fun HomeScreenContent(
                 verticalArrangement = Arrangement.Center
             ) {
                 Surface(
-                    modifier = Modifier.size(width = 210.dp, height = 250.dp),
+                    modifier = Modifier
+                        .size(width = 210.dp, height = 250.dp)
+                        .graphicsLayer {
+                            alpha = imageAlpha
+                            translationY = imageOffsetY
+                        },
                     shape = RoundedCornerShape(25.dp),
                     color = MichiDeepPink
                 ) {
@@ -159,7 +261,11 @@ fun HomeScreenContent(
                     text = "MichiXO",
                     fontFamily = MichiFont,
                     fontSize = 40.sp,
-                    color = MichiSoftBrown
+                    color = MichiSoftBrown,
+                    modifier = Modifier.graphicsLayer {
+                        alpha = titleAlpha
+                        translationY = titleOffsetY
+                    }
                 )
 
                 Spacer(modifier = Modifier.height(6.dp))
@@ -168,7 +274,11 @@ fun HomeScreenContent(
                     text = stringResource(R.string.lest_play),
                     fontSize = 13.sp,
                     color = MichiTextPrimary,
-                    fontWeight = FontWeight.Medium
+                    fontWeight = FontWeight.Medium,
+                    modifier = Modifier.graphicsLayer {
+                        alpha = subtitleAlpha
+                        translationY = subtitleOffsetY
+                    }
                 )
 
                 Spacer(modifier = Modifier.height(24.dp))
@@ -177,7 +287,13 @@ fun HomeScreenContent(
                     onClick = onPlayClick,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(56.dp),
+                        .height(56.dp)
+                        .graphicsLayer {
+                            alpha = playButtonAlpha
+                            translationY = playButtonOffsetY
+                            scaleX = playButtonScale
+                            scaleY = playButtonScale
+                        },
                     shape = RoundedCornerShape(30.dp),
                     colors = ButtonDefaults.buttonColors(
                         containerColor = MichiButton,
@@ -207,7 +323,12 @@ fun HomeScreenContent(
                 Spacer(modifier = Modifier.height(12.dp))
 
                 Row(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .graphicsLayer {
+                            alpha = settingsAlpha
+                            translationY = settingsOffsetY
+                        },
                     horizontalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     SecondaryButton(
@@ -263,7 +384,8 @@ private fun SecondaryButton(
 fun HomeScreenPreview() {
     MichiXOTheme {
         HomeScreenContent(
-            onPlayClick = {}
+            onPlayClick = {},
+            onSettingsClick = {}
         )
     }
 }
