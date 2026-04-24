@@ -19,6 +19,7 @@
     <string name="status_your_turn">• YOUR TURN</string>
 
     <string name="pause">PAUSE</string>
+    <string name="settings">SETTINGS</string>
 
     <string name="cd_player_x">Player X</string>
     <string name="cd_player_o">Player O</string>

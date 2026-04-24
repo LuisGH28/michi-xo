@@ -86,6 +86,7 @@ class AiPlayer(
         var localAlpha = alpha
         var localBeta = beta
 
+        // Ia intenta maximzar el scorre
         if (isMaximizing) {
             var bestScore = Int.MIN_VALUE
 
