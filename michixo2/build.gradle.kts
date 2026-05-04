@@ -8,16 +8,24 @@ android {
     namespace = "com.luigidev.michixo.mobile"
     compileSdk = 36
 
-    androidResources {
-        generateLocaleConfig = true
+
+
+    signingConfigs {
+        create("release") {
+            storeFile = file("/Users/usuario/Documents/keystores/michixo/michixo.jks")
+            storePassword = project.findProperty("RELEASE_STORE_PASSWORD")?.toString()
+            keyAlias = project.findProperty("RELEASE_KEY_ALIAS")?.toString()
+            keyPassword = project.findProperty("RELEASE_KEY_PASSWORD")?.toString()
+        }
     }
+
 
     defaultConfig {
         applicationId = "com.luigidev.michixo.mobile"
         minSdk = 24
         targetSdk = 36
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = 2
+        versionName = "1.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -29,6 +37,7 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            signingConfig = signingConfigs.getByName("release")
         }
     }
     compileOptions {
@@ -55,6 +64,7 @@ dependencies {
     implementation(libs.material3)
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0")
     implementation("androidx.compose.material:material-icons-extended")
+    implementation("androidx.compose.material3:material3-window-size-class:1.3.0")
     implementation("androidx.appcompat:appcompat:1.7.0")
     implementation("androidx.work:work-runtime-ktx:2.9.0")
     implementation(project(":michixo-core"))

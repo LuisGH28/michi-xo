@@ -1,9 +1,11 @@
 package com.luigidev.michixo.mobile.presentation.ui
 
+import android.content.res.Configuration
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -20,6 +22,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.EmojiEvents
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Pets
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material3.AlertDialog
@@ -36,13 +39,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.foundation.Image
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.luigidev.michixo.mobile.R
@@ -68,6 +72,10 @@ fun ResultScreen(
 ) {
     var showBoardDialog by remember { mutableStateOf(false) }
 
+    val configuration = LocalConfiguration.current
+    val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
+    val isTablet = configuration.smallestScreenWidthDp >= 600
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -75,197 +83,21 @@ fun ResultScreen(
             .navigationBarsPadding()
             .padding(horizontal = 24.dp, vertical = 20.dp)
     ) {
-        Column(
-            modifier = Modifier.fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            Text(
-                text = stringResource(R.string.match_result),
-                fontFamily = MichiFont,
-                fontSize = 30.sp,
-                color = MichiSoftBrown,
-                fontWeight = FontWeight.Bold
+        if (isTablet && isLandscape) {
+            TabletLandscapeResultContent(
+                uiState = uiState,
+                onPlayAgain = onPlayAgain,
+                onHome = onHome,
+                onViewBoard = { showBoardDialog = true }
             )
-
-            Spacer(modifier = Modifier.height(22.dp))
-
-            Surface(
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(30.dp),
-                color = MichiDeepPink
-            ) {
-                Box(
-                    modifier = Modifier.padding(6.dp),
-                    contentAlignment = Alignment.TopEnd
-                ) {
-                    uiState.resultImageRes?.let { imageRes ->
-                        Image(
-                            painter = painterResource(id = imageRes),
-                            contentDescription = stringResource(R.string.cd_result_image),
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(320.dp)
-                                .clip(RoundedCornerShape(26.dp)),
-                            contentScale = ContentScale.Crop
-                        )
-                    }
-
-                    Surface(
-                        modifier = Modifier
-                            .padding(12.dp)
-                            .size(56.dp),
-                        shape = CircleShape,
-                        color = MichiButton,
-                        shadowElevation = 4.dp
-                    ) {
-                        Box(contentAlignment = Alignment.Center) {
-                            Icon(
-                                imageVector = Icons.Filled.EmojiEvents,
-                                contentDescription = stringResource(R.string.cd_winner),
-                                tint = MichiWhite,
-                                modifier = Modifier.size(28.dp)
-                            )
-                        }
-                    }
-                }
-            }
-
-            Spacer(modifier = Modifier.height(26.dp))
-
-            Text(
-                text = when {
-                    uiState.winner == Player.X -> stringResource(R.string.result_you_win)
-                    uiState.winner == Player.O -> stringResource(R.string.result_luz_wins)
-                    uiState.isDraw -> stringResource(R.string.result_draw)
-                    else -> stringResource(R.string.match_result_fallback)
-                },
-                fontFamily = MichiFont,
-                fontSize = 38.sp,
-                color = MichiButton,
-                fontWeight = FontWeight.Bold
+        } else {
+            PortraitResultContent(
+                uiState = uiState,
+                isTablet = isTablet,
+                onPlayAgain = onPlayAgain,
+                onHome = onHome,
+                onViewBoard = { showBoardDialog = true }
             )
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-            Surface(
-                shape = RoundedCornerShape(20.dp),
-                color = MichiPink
-            ) {
-                Text(
-                    text = when {
-                        uiState.winner == Player.X -> stringResource(R.string.result_msg_you_win)
-                        uiState.winner == Player.O -> stringResource(R.string.result_msg_luz_wins)
-                        uiState.isDraw -> stringResource(R.string.result_msg_draw)
-                        else -> stringResource(R.string.good_game_human)
-                    },
-                    modifier = Modifier.padding(horizontal = 18.dp, vertical = 10.dp),
-                    color = MichiSoftBrown,
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.Medium
-                )
-            }
-
-            Spacer(modifier = Modifier.height(26.dp))
-
-            Button(
-                onClick = onPlayAgain,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(58.dp),
-                shape = RoundedCornerShape(30.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = MichiButton,
-                    contentColor = MichiSoftPink
-                )
-            ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center
-                ) {
-                    Icon(
-                        imageVector = Icons.Filled.Refresh,
-                        contentDescription = stringResource(R.string.play_again),
-                        modifier = Modifier.size(22.dp)
-                    )
-
-                    Spacer(modifier = Modifier.width(8.dp))
-
-                    Text(
-                        text = stringResource(R.string.play_again),
-                        fontSize = 22.sp,
-                        fontWeight = FontWeight.SemiBold
-                    )
-                }
-            }
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-            Button(
-                onClick = { showBoardDialog = true },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(58.dp),
-                shape = RoundedCornerShape(30.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = MichiPink,
-                    contentColor = MichiSoftBrown
-                )
-            ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center
-                ) {
-                    Icon(
-                        imageVector = Icons.Filled.Visibility,
-                        contentDescription = stringResource(R.string.view_board),
-                        modifier = Modifier.size(22.dp)
-                    )
-
-                    Spacer(modifier = Modifier.width(8.dp))
-
-                    Text(
-                        text = stringResource(R.string.view_board),
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.Medium
-                    )
-                }
-            }
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-            Button(
-                onClick = onHome,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(58.dp),
-                shape = RoundedCornerShape(30.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = MichiDeepPink,
-                    contentColor = MichiSoftBrown
-                )
-            ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center
-                ) {
-                    Icon(
-                        imageVector = Icons.Filled.Home,
-                        contentDescription = stringResource(R.string.home),
-                        modifier = Modifier.size(22.dp)
-                    )
-
-                    Spacer(modifier = Modifier.width(8.dp))
-
-                    Text(
-                        text = stringResource(R.string.home),
-                        fontSize = 22.sp,
-                        fontWeight = FontWeight.Medium
-                    )
-                }
-            }
         }
     }
 
@@ -310,6 +142,309 @@ fun ResultScreen(
 }
 
 @Composable
+fun PortraitResultContent(
+    uiState: GameUiState,
+    isTablet: Boolean,
+    onPlayAgain: () -> Unit,
+    onHome: () -> Unit,
+    onViewBoard: () -> Unit
+) {
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Spacer(modifier = Modifier.height(8.dp))
+
+        ResultTitle()
+
+        Spacer(modifier = Modifier.height(22.dp))
+
+        ResultImageCard(
+            uiState = uiState,
+            modifier = Modifier.fillMaxWidth(),
+            imageHeight = if (isTablet) 380.dp else 320.dp,
+            contentScale = if (isTablet) ContentScale.Fit else ContentScale.Crop
+        )
+
+        Spacer(modifier = Modifier.height(26.dp))
+
+        ResultText(uiState = uiState)
+
+        Spacer(modifier = Modifier.height(12.dp))
+
+        ResultMessage(uiState = uiState)
+
+        Spacer(modifier = Modifier.height(26.dp))
+
+        ResultButtons(
+            onPlayAgain = onPlayAgain,
+            onViewBoard = onViewBoard,
+            onHome = onHome
+        )
+    }
+}
+
+@Composable
+fun TabletLandscapeResultContent(
+    uiState: GameUiState,
+    onPlayAgain: () -> Unit,
+    onHome: () -> Unit,
+    onViewBoard: () -> Unit
+) {
+    Row(
+        modifier = Modifier.fillMaxSize(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(28.dp)
+    ) {
+        Column(
+            modifier = Modifier
+                .weight(1.25f)
+                .fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            ResultImageCard(
+                uiState = uiState,
+                modifier = Modifier.fillMaxWidth(),
+                imageHeight = 360.dp,
+                contentScale = ContentScale.Fit
+            )
+        }
+
+        Column(
+            modifier = Modifier
+                .weight(0.85f)
+                .fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            ResultTitle()
+
+            Spacer(modifier = Modifier.height(20.dp))
+
+            ResultText(uiState = uiState)
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            ResultMessage(uiState = uiState)
+
+            Spacer(modifier = Modifier.height(28.dp))
+
+            ResultButtons(
+                onPlayAgain = onPlayAgain,
+                onViewBoard = onViewBoard,
+                onHome = onHome
+            )
+        }
+    }
+}
+
+@Composable
+fun ResultTitle() {
+    Text(
+        text = stringResource(R.string.match_result),
+        fontFamily = MichiFont,
+        fontSize = 30.sp,
+        color = MichiSoftBrown,
+        fontWeight = FontWeight.Bold
+    )
+}
+
+@Composable
+fun ResultImageCard(
+    uiState: GameUiState,
+    modifier: Modifier = Modifier,
+    imageHeight: Dp,
+    contentScale: ContentScale
+) {
+    Surface(
+        modifier = modifier,
+        shape = RoundedCornerShape(30.dp),
+        color = MichiDeepPink
+    ) {
+        Box(
+            modifier = Modifier.padding(6.dp),
+            contentAlignment = Alignment.TopEnd
+        ) {
+            uiState.resultImageRes?.let { imageRes ->
+                Image(
+                    painter = painterResource(id = imageRes),
+                    contentDescription = stringResource(R.string.cd_result_image),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(imageHeight)
+                        .clip(RoundedCornerShape(26.dp)),
+                    contentScale = contentScale
+                )
+            }
+
+            Surface(
+                modifier = Modifier
+                    .padding(12.dp)
+                    .size(56.dp),
+                shape = CircleShape,
+                color = MichiButton,
+                shadowElevation = 4.dp
+            ) {
+                Box(contentAlignment = Alignment.Center) {
+                    Icon(
+                        imageVector = Icons.Filled.EmojiEvents,
+                        contentDescription = stringResource(R.string.cd_winner),
+                        tint = MichiWhite,
+                        modifier = Modifier.size(28.dp)
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun ResultText(
+    uiState: GameUiState
+) {
+    Text(
+        text = when {
+            uiState.winner == Player.X -> stringResource(R.string.result_you_win)
+            uiState.winner == Player.O -> stringResource(R.string.result_luz_wins)
+            uiState.isDraw -> stringResource(R.string.result_draw)
+            else -> stringResource(R.string.match_result_fallback)
+        },
+        fontFamily = MichiFont,
+        fontSize = 38.sp,
+        color = MichiButton,
+        fontWeight = FontWeight.Bold
+    )
+}
+
+@Composable
+fun ResultMessage(
+    uiState: GameUiState
+) {
+    Surface(
+        shape = RoundedCornerShape(20.dp),
+        color = MichiPink
+    ) {
+        Text(
+            text = when {
+                uiState.winner == Player.X -> stringResource(R.string.result_msg_you_win)
+                uiState.winner == Player.O -> stringResource(R.string.result_msg_luz_wins)
+                uiState.isDraw -> stringResource(R.string.result_msg_draw)
+                else -> stringResource(R.string.good_game_human)
+            },
+            modifier = Modifier.padding(horizontal = 18.dp, vertical = 10.dp),
+            color = MichiSoftBrown,
+            fontSize = 18.sp,
+            fontWeight = FontWeight.Medium
+        )
+    }
+}
+
+@Composable
+fun ResultButtons(
+    onPlayAgain: () -> Unit,
+    onViewBoard: () -> Unit,
+    onHome: () -> Unit
+) {
+    Button(
+        onClick = onPlayAgain,
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(58.dp),
+        shape = RoundedCornerShape(30.dp),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = MichiButton,
+            contentColor = MichiSoftPink
+        )
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center
+        ) {
+            Icon(
+                imageVector = Icons.Filled.Refresh,
+                contentDescription = stringResource(R.string.play_again),
+                modifier = Modifier.size(22.dp)
+            )
+
+            Spacer(modifier = Modifier.width(8.dp))
+
+            Text(
+                text = stringResource(R.string.play_again),
+                fontSize = 22.sp,
+                fontWeight = FontWeight.SemiBold
+            )
+        }
+    }
+
+    Spacer(modifier = Modifier.height(12.dp))
+
+    Button(
+        onClick = onViewBoard,
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(58.dp),
+        shape = RoundedCornerShape(30.dp),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = MichiPink,
+            contentColor = MichiSoftBrown
+        )
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center
+        ) {
+            Icon(
+                imageVector = Icons.Filled.Visibility,
+                contentDescription = stringResource(R.string.view_board),
+                modifier = Modifier.size(22.dp)
+            )
+
+            Spacer(modifier = Modifier.width(8.dp))
+
+            Text(
+                text = stringResource(R.string.view_board),
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Medium
+            )
+        }
+    }
+
+    Spacer(modifier = Modifier.height(12.dp))
+
+    Button(
+        onClick = onHome,
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(58.dp),
+        shape = RoundedCornerShape(30.dp),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = MichiDeepPink,
+            contentColor = MichiSoftBrown
+        )
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center
+        ) {
+            Icon(
+                imageVector = Icons.Filled.Home,
+                contentDescription = stringResource(R.string.home),
+                modifier = Modifier.size(22.dp)
+            )
+
+            Spacer(modifier = Modifier.width(8.dp))
+
+            Text(
+                text = stringResource(R.string.home),
+                fontSize = 22.sp,
+                fontWeight = FontWeight.Medium
+            )
+        }
+    }
+}
+
+@Composable
 fun ResultBoard(
     board: List<Player>,
     winLine: List<Int>?,
@@ -333,6 +468,7 @@ fun ResultBoard(
                 ) {
                     for (col in 0 until 3) {
                         val index = row * 3 + col
+
                         ResultBoardCell(
                             value = board[index],
                             highlighted = winLine?.contains(index) == true,
@@ -356,22 +492,28 @@ fun ResultBoardCell(
         shape = RoundedCornerShape(14.dp),
         color = if (highlighted) MichiPink else MichiWhite
     ) {
-        Box(
+        BoxWithConstraints(
+            modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.Center
         ) {
+            val cellWidth = maxWidth
+
+            val iconSize = (cellWidth * 0.50f)
+                .coerceIn(28.dp, 54.dp)
+
             when (value) {
-                Player.X -> Text(
-                    text = "✕",
-                    fontSize = 28.sp,
-                    color = MichiButton,
-                    fontWeight = FontWeight.Bold
+                Player.X -> Icon(
+                    painter = painterResource(id = R.drawable.ic_yarn),
+                    contentDescription = stringResource(R.string.cd_player_x),
+                    modifier = Modifier.size(iconSize),
+                    tint = Color.Unspecified
                 )
 
-                Player.O -> Text(
-                    text = "◯",
-                    fontSize = 28.sp,
-                    color = MichiO,
-                    fontWeight = FontWeight.Bold
+                Player.O -> Icon(
+                    imageVector = Icons.Filled.Pets,
+                    contentDescription = stringResource(R.string.cd_player_o),
+                    modifier = Modifier.size(iconSize),
+                    tint = MichiO
                 )
 
                 Player.NONE -> {}

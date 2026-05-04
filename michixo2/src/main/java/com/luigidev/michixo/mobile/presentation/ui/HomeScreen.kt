@@ -1,5 +1,6 @@
 package com.luigidev.michixo.mobile.presentation.ui
 
+import android.content.res.Configuration
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
@@ -42,6 +43,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -88,6 +90,10 @@ fun HomeScreenContent(
     onSettingsClick: () -> Unit = {}
 ) {
     var startAnimation by remember { mutableStateOf(false) }
+
+    val configuration = LocalConfiguration.current
+    val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
+    val isTablet = configuration.smallestScreenWidthDp >= 600
 
     LaunchedEffect(Unit) {
         startAnimation = true
@@ -184,163 +190,340 @@ fun HomeScreenContent(
         Column(
             modifier = Modifier.fillMaxSize()
         ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 6.dp)
-                    .graphicsLayer {
-                        alpha = headerAlpha
-                        translationY = headerOffsetY
-                    },
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Surface(
-                        modifier = Modifier.size(26.dp),
-                        shape = CircleShape,
-                        color = MichiPink
-                    ) {
-                        Box(contentAlignment = Alignment.Center) {
-                            Icon(
-                                imageVector = Icons.Filled.Pets,
-                                contentDescription = stringResource(R.string.michi_icon),
-                                modifier = Modifier.size(14.dp),
-                                tint = MichiSoftBrown
-                            )
-                        }
-                    }
+            HomeHeader(
+                headerAlpha = headerAlpha,
+                headerOffsetY = headerOffsetY
+            )
 
-                    Spacer(modifier = Modifier.width(8.dp))
-
-                    Text(
-                        text = "MichiXO",
-                        fontFamily = MichiFont,
-                        fontSize = 16.sp,
-                        color = MichiSoftBrown
-                    )
-                }
-            }
-
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .weight(1f),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
-            ) {
-                Surface(
-                    modifier = Modifier
-                        .size(width = 210.dp, height = 250.dp)
-                        .graphicsLayer {
-                            alpha = imageAlpha
-                            translationY = imageOffsetY
-                        },
-                    shape = RoundedCornerShape(25.dp),
-                    color = MichiDeepPink
-                ) {
-                    Box(
-                        modifier = Modifier.padding(2.dp),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Image(
-                            painter = painterResource(id = R.drawable.luz_hs),
-                            contentDescription = stringResource(R.string.luz_image),
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .clip(RoundedCornerShape(22.dp)),
-                            contentScale = ContentScale.Crop
-                        )
-                    }
-                }
-
-                Spacer(modifier = Modifier.height(18.dp))
-
-                Text(
-                    text = "MichiXO",
-                    fontFamily = MichiFont,
-                    fontSize = 40.sp,
-                    color = MichiSoftBrown,
-                    modifier = Modifier.graphicsLayer {
-                        alpha = titleAlpha
-                        translationY = titleOffsetY
-                    }
+            if (isTablet && isLandscape) {
+                TabletLandscapeHomeContent(
+                    imageAlpha = imageAlpha,
+                    imageOffsetY = imageOffsetY,
+                    titleAlpha = titleAlpha,
+                    titleOffsetY = titleOffsetY,
+                    subtitleAlpha = subtitleAlpha,
+                    subtitleOffsetY = subtitleOffsetY,
+                    playButtonAlpha = playButtonAlpha,
+                    playButtonOffsetY = playButtonOffsetY,
+                    playButtonScale = playButtonScale,
+                    settingsAlpha = settingsAlpha,
+                    settingsOffsetY = settingsOffsetY,
+                    onPlayClick = onPlayClick,
+                    onSettingsClick = onSettingsClick
                 )
-
-                Spacer(modifier = Modifier.height(6.dp))
-
-                Text(
-                    text = stringResource(R.string.lest_play),
-                    fontSize = 13.sp,
-                    color = MichiTextPrimary,
-                    fontWeight = FontWeight.Medium,
-                    modifier = Modifier.graphicsLayer {
-                        alpha = subtitleAlpha
-                        translationY = subtitleOffsetY
-                    }
+            } else {
+                PortraitHomeContent(
+                    imageAlpha = imageAlpha,
+                    imageOffsetY = imageOffsetY,
+                    titleAlpha = titleAlpha,
+                    titleOffsetY = titleOffsetY,
+                    subtitleAlpha = subtitleAlpha,
+                    subtitleOffsetY = subtitleOffsetY,
+                    playButtonAlpha = playButtonAlpha,
+                    playButtonOffsetY = playButtonOffsetY,
+                    playButtonScale = playButtonScale,
+                    settingsAlpha = settingsAlpha,
+                    settingsOffsetY = settingsOffsetY,
+                    onPlayClick = onPlayClick,
+                    onSettingsClick = onSettingsClick
                 )
-
-                Spacer(modifier = Modifier.height(24.dp))
-
-                Button(
-                    onClick = onPlayClick,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(56.dp)
-                        .graphicsLayer {
-                            alpha = playButtonAlpha
-                            translationY = playButtonOffsetY
-                            scaleX = playButtonScale
-                            scaleY = playButtonScale
-                        },
-                    shape = RoundedCornerShape(30.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = MichiButton,
-                        contentColor = MichiTextPrimary
-                    )
-                ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.Center
-                    ) {
-                        Icon(
-                            imageVector = Icons.Filled.PlayArrow,
-                            contentDescription = stringResource(R.string.play),
-                            modifier = Modifier.size(22.dp)
-                        )
-
-                        Spacer(modifier = Modifier.width(8.dp))
-
-                        Text(
-                            text = stringResource(R.string.play),
-                            fontSize = 17.sp,
-                            fontWeight = FontWeight.SemiBold
-                        )
-                    }
-                }
-
-                Spacer(modifier = Modifier.height(12.dp))
-
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .graphicsLayer {
-                            alpha = settingsAlpha
-                            translationY = settingsOffsetY
-                        },
-                    horizontalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
-                    SecondaryButton(
-                        modifier = Modifier.weight(1f),
-                        text = stringResource(R.string.settings_title),
-                        icon = Icons.Filled.Settings,
-                        onClick = onSettingsClick
-                    )
-                }
             }
         }
     }
+}
+
+@Composable
+fun HomeHeader(
+    headerAlpha: Float,
+    headerOffsetY: Float
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 6.dp)
+            .graphicsLayer {
+                alpha = headerAlpha
+                translationY = headerOffsetY
+            },
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Surface(
+            modifier = Modifier.size(26.dp),
+            shape = CircleShape,
+            color = MichiPink
+        ) {
+            Box(contentAlignment = Alignment.Center) {
+                Icon(
+                    imageVector = Icons.Filled.Pets,
+                    contentDescription = stringResource(R.string.michi_icon),
+                    modifier = Modifier.size(14.dp),
+                    tint = MichiSoftBrown
+                )
+            }
+        }
+
+        Spacer(modifier = Modifier.width(8.dp))
+
+        Text(
+            text = stringResource(R.string.app_name),
+            fontFamily = MichiFont,
+            fontSize = 16.sp,
+            color = MichiSoftBrown
+        )
+    }
+}
+
+@Composable
+fun PortraitHomeContent(
+    imageAlpha: Float,
+    imageOffsetY: Float,
+    titleAlpha: Float,
+    titleOffsetY: Float,
+    subtitleAlpha: Float,
+    subtitleOffsetY: Float,
+    playButtonAlpha: Float,
+    playButtonOffsetY: Float,
+    playButtonScale: Float,
+    settingsAlpha: Float,
+    settingsOffsetY: Float,
+    onPlayClick: () -> Unit,
+    onSettingsClick: () -> Unit
+) {
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        HomeHeroImage(
+            modifier = Modifier
+                .size(width = 210.dp, height = 250.dp)
+                .graphicsLayer {
+                    alpha = imageAlpha
+                    translationY = imageOffsetY
+                }
+        )
+
+        Spacer(modifier = Modifier.height(18.dp))
+
+        HomeTitle(
+            titleAlpha = titleAlpha,
+            titleOffsetY = titleOffsetY,
+            fontSize = 40
+        )
+
+        Spacer(modifier = Modifier.height(6.dp))
+
+        HomeSubtitle(
+            subtitleAlpha = subtitleAlpha,
+            subtitleOffsetY = subtitleOffsetY
+        )
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+        HomeButtons(
+            playButtonAlpha = playButtonAlpha,
+            playButtonOffsetY = playButtonOffsetY,
+            playButtonScale = playButtonScale,
+            settingsAlpha = settingsAlpha,
+            settingsOffsetY = settingsOffsetY,
+            buttonWidthFraction = 1f,
+            onPlayClick = onPlayClick,
+            onSettingsClick = onSettingsClick
+        )
+    }
+}
+
+@Composable
+fun TabletLandscapeHomeContent(
+    imageAlpha: Float,
+    imageOffsetY: Float,
+    titleAlpha: Float,
+    titleOffsetY: Float,
+    subtitleAlpha: Float,
+    subtitleOffsetY: Float,
+    playButtonAlpha: Float,
+    playButtonOffsetY: Float,
+    playButtonScale: Float,
+    settingsAlpha: Float,
+    settingsOffsetY: Float,
+    onPlayClick: () -> Unit,
+    onSettingsClick: () -> Unit
+) {
+    Row(
+        modifier = Modifier.fillMaxSize(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(40.dp)
+    ) {
+        Column(
+            modifier = Modifier.weight(1f),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            HomeHeroImage(
+                modifier = Modifier
+                    .size(width = 260.dp, height = 300.dp)
+                    .graphicsLayer {
+                        alpha = imageAlpha
+                        translationY = imageOffsetY
+                    }
+            )
+
+            Spacer(modifier = Modifier.height(18.dp))
+
+            HomeTitle(
+                titleAlpha = titleAlpha,
+                titleOffsetY = titleOffsetY,
+                fontSize = 42
+            )
+
+            Spacer(modifier = Modifier.height(6.dp))
+
+            HomeSubtitle(
+                subtitleAlpha = subtitleAlpha,
+                subtitleOffsetY = subtitleOffsetY
+            )
+        }
+
+        Column(
+            modifier = Modifier.weight(1f),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            HomeButtons(
+                playButtonAlpha = playButtonAlpha,
+                playButtonOffsetY = playButtonOffsetY,
+                playButtonScale = playButtonScale,
+                settingsAlpha = settingsAlpha,
+                settingsOffsetY = settingsOffsetY,
+                buttonWidthFraction = 0.85f,
+                onPlayClick = onPlayClick,
+                onSettingsClick = onSettingsClick
+            )
+        }
+    }
+}
+
+@Composable
+fun HomeHeroImage(
+    modifier: Modifier = Modifier
+) {
+    Surface(
+        modifier = modifier,
+        shape = RoundedCornerShape(25.dp),
+        color = MichiDeepPink
+    ) {
+        Box(
+            modifier = Modifier.padding(2.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.luz_hs),
+                contentDescription = stringResource(R.string.luz_image),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .clip(RoundedCornerShape(22.dp)),
+                contentScale = ContentScale.Crop
+            )
+        }
+    }
+}
+
+@Composable
+fun HomeTitle(
+    titleAlpha: Float,
+    titleOffsetY: Float,
+    fontSize: Int
+) {
+    Text(
+        text = stringResource(R.string.app_name),
+        fontFamily = MichiFont,
+        fontSize = fontSize.sp,
+        color = MichiSoftBrown,
+        modifier = Modifier.graphicsLayer {
+            alpha = titleAlpha
+            translationY = titleOffsetY
+        }
+    )
+}
+
+@Composable
+fun HomeSubtitle(
+    subtitleAlpha: Float,
+    subtitleOffsetY: Float
+) {
+    Text(
+        text = stringResource(R.string.lest_play),
+        fontSize = 13.sp,
+        color = MichiTextPrimary,
+        fontWeight = FontWeight.Medium,
+        modifier = Modifier.graphicsLayer {
+            alpha = subtitleAlpha
+            translationY = subtitleOffsetY
+        }
+    )
+}
+
+@Composable
+fun HomeButtons(
+    playButtonAlpha: Float,
+    playButtonOffsetY: Float,
+    playButtonScale: Float,
+    settingsAlpha: Float,
+    settingsOffsetY: Float,
+    buttonWidthFraction: Float,
+    onPlayClick: () -> Unit,
+    onSettingsClick: () -> Unit
+) {
+    Button(
+        onClick = onPlayClick,
+        modifier = Modifier
+            .fillMaxWidth(buttonWidthFraction)
+            .height(56.dp)
+            .graphicsLayer {
+                alpha = playButtonAlpha
+                translationY = playButtonOffsetY
+                scaleX = playButtonScale
+                scaleY = playButtonScale
+            },
+        shape = RoundedCornerShape(30.dp),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = MichiButton,
+            contentColor = MichiTextPrimary
+        )
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center
+        ) {
+            Icon(
+                imageVector = Icons.Filled.PlayArrow,
+                contentDescription = stringResource(R.string.play),
+                modifier = Modifier.size(22.dp)
+            )
+
+            Spacer(modifier = Modifier.width(8.dp))
+
+            Text(
+                text = stringResource(R.string.play),
+                fontSize = 17.sp,
+                fontWeight = FontWeight.SemiBold
+            )
+        }
+    }
+
+    Spacer(modifier = Modifier.height(12.dp))
+
+    SecondaryButton(
+        modifier = Modifier
+            .fillMaxWidth(buttonWidthFraction)
+            .graphicsLayer {
+                alpha = settingsAlpha
+                translationY = settingsOffsetY
+            },
+        text = stringResource(R.string.settings_title),
+        icon = Icons.Filled.Settings,
+        onClick = onSettingsClick
+    )
 }
 
 @Composable

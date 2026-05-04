@@ -1,5 +1,6 @@
 package com.luigidev.michixo.mobile.presentation.ui
 
+import android.content.res.Configuration
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.ContentTransform
@@ -17,17 +18,18 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -47,8 +49,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -79,7 +83,7 @@ fun TicTacToeScreen(
     vm: GameViewModel,
     onExitApp: () -> Unit,
     onNotificationsToggle: (Boolean) -> Unit
-) {
+){
     val uiState by vm.uiState.collectAsState()
     val context = LocalContext.current
 
@@ -93,9 +97,11 @@ fun TicTacToeScreen(
                 uiState.winner == Player.X -> {
                     VibrationHelper.vibrate(context, 90)
                 }
+
                 uiState.winner == Player.O -> {
                     VibrationHelper.vibrate(context, 180)
                 }
+
                 uiState.isDraw -> {
                     VibrationHelper.vibrate(context, 70)
                 }
@@ -248,6 +254,11 @@ fun GameScreen(
     onPauseClick: () -> Unit = {},
     onSettingsClick: () -> Unit = {}
 ) {
+    val configuration = LocalConfiguration.current
+
+    val isLandscape =
+        configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -255,142 +266,291 @@ fun GameScreen(
             .navigationBarsPadding()
             .padding(horizontal = 22.dp, vertical = 16.dp)
     ) {
+        if (isLandscape) {
+            LandscapeGameContent(
+                uiState = uiState,
+                onCellTap = onCellTap,
+                onPauseClick = onPauseClick,
+                onSettingsClick = onSettingsClick
+            )
+        } else {
+            PortraitGameContent(
+                uiState = uiState,
+                onCellTap = onCellTap,
+                onPauseClick = onPauseClick,
+                onSettingsClick = onSettingsClick
+            )
+        }
+    }
+}
+
+@Composable
+fun PortraitGameContent(
+    uiState: GameUiState,
+    onCellTap: (Int) -> Unit,
+    onPauseClick: () -> Unit,
+    onSettingsClick: () -> Unit
+) {
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+
+        GameHeader()
+
+        Spacer(modifier = Modifier.height(20.dp))
+
+        LuzHeader(uiState = uiState)
+
+        Spacer(modifier = Modifier.height(26.dp))
+
+        GameBoard(
+            board = uiState.board,
+            onCellTap = onCellTap,
+            modifier = Modifier.fillMaxWidth(0.9f)
+        )
+
+        Spacer(modifier = Modifier.height(18.dp))
+
+        GameStatus(uiState = uiState)
+
+        Spacer(modifier = Modifier.height(28.dp))
+
+        GameActions(
+            onPauseClick = onPauseClick,
+            onSettingsClick = onSettingsClick
+        )
+    }
+}
+
+@Composable
+fun LandscapeGameContent(
+    uiState: GameUiState,
+    onCellTap: (Int) -> Unit,
+    onPauseClick: () -> Unit,
+    onSettingsClick: () -> Unit
+) {
+    Row(
+        modifier = Modifier.fillMaxSize(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(24.dp)
+    ) {
         Column(
-            modifier = Modifier.fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally
+            modifier = Modifier
+                .weight(0.9f)
+                .fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
         ) {
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Surface(
-                    modifier = Modifier.size(30.dp),
-                    shape = CircleShape,
-                    color = MichiPink
-                ) {
-                    Box(contentAlignment = Alignment.Center) {
-                        Icon(
-                            imageVector = Icons.Filled.Pets,
-                            contentDescription = stringResource(R.string.cd_pets),
-                            modifier = Modifier.size(16.dp),
-                            tint = MichiSoftBrown
-                        )
-                    }
-                }
-
-                Box(
-                    modifier = Modifier.fillMaxWidth(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = stringResource(R.string.app_name),
-                        fontFamily = MichiFont,
-                        fontSize = 22.sp,
-                        color = MichiButton
-                    )
-                }
-            }
+            GameHeader()
 
             Spacer(modifier = Modifier.height(20.dp))
 
-            Box(
-                contentAlignment = Alignment.TopCenter
-            ) {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Spacer(modifier = Modifier.height(20.dp))
+            LuzHeader(uiState = uiState)
 
-                    Image(
-                        painter = painterResource(id = R.drawable.luz_thinking),
-                        contentDescription = stringResource(R.string.cd_luz_thinking),
-                        modifier = Modifier
-                            .size(92.dp)
-                            .clip(CircleShape)
-                            .border(3.dp, MichiPink, CircleShape),
-                        contentScale = ContentScale.Crop
-                    )
+            Spacer(modifier = Modifier.height(22.dp))
 
-                    Spacer(modifier = Modifier.height(14.dp))
+            GameStatus(uiState = uiState)
 
-                    Text(
-                        text = stringResource(R.string.cat_luz),
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = MichiSoftBrown
-                    )
+            Spacer(modifier = Modifier.height(22.dp))
 
-                    Spacer(modifier = Modifier.height(4.dp))
+            GameActions(
+                onPauseClick = onPauseClick,
+                onSettingsClick = onSettingsClick
+            )
+        }
 
-                    Text(
-                        text = stringResource(R.string.player_2_ai),
-                        fontSize = 13.sp,
-                        color = MichiTextPrimary
-                    )
-                }
-
-                Surface(
-                    modifier = Modifier.offset(y = (-4).dp),
-                    shape = RoundedCornerShape(14.dp),
-                    color = MichiWhite,
-                    shadowElevation = 6.dp
-                ) {
-                    Text(
-                        text = if (uiState.isAiThinking) {
-                            stringResource(R.string.luz_thinking_message)
-                        } else {
-                            stringResource(R.string.luz_observing_message)
-                        },
-                        modifier = Modifier.padding(horizontal = 14.dp, vertical = 10.dp),
-                        color = MichiButton,
-                        fontSize = 13.sp,
-                        fontWeight = FontWeight.Medium
-                    )
-                }
-            }
-
-            Spacer(modifier = Modifier.height(26.dp))
-
+        Box(
+            modifier = Modifier
+                .weight(1.25f)
+                .fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
             GameBoard(
                 board = uiState.board,
                 onCellTap = onCellTap,
-                modifier = Modifier.fillMaxWidth(0.9f)
+                modifier = Modifier.fillMaxWidth(0.82f)
+            )
+        }
+    }
+}
+
+@Composable
+fun GameHeader() {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Surface(
+            modifier = Modifier.size(30.dp),
+            shape = CircleShape,
+            color = MichiPink
+        ) {
+            Box(contentAlignment = Alignment.Center) {
+                Icon(
+                    imageVector = Icons.Filled.Pets,
+                    contentDescription = stringResource(R.string.cd_pets),
+                    modifier = Modifier.size(16.dp),
+                    tint = MichiSoftBrown
+                )
+            }
+        }
+
+        Box(
+            modifier = Modifier.fillMaxWidth(),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = stringResource(R.string.app_name),
+                fontFamily = MichiFont,
+                fontSize = 22.sp,
+                color = MichiButton
+            )
+        }
+    }
+}
+
+@Composable
+fun LuzHeader(
+    uiState: GameUiState
+) {
+    Box(
+        contentAlignment = Alignment.TopCenter
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Spacer(modifier = Modifier.height(20.dp))
+
+            Image(
+                painter = painterResource(id = R.drawable.luz_thinking),
+                contentDescription = stringResource(R.string.cd_luz_thinking),
+                modifier = Modifier
+                    .size(92.dp)
+                    .clip(CircleShape)
+                    .border(3.dp, MichiPink, CircleShape),
+                contentScale = ContentScale.Crop
             )
 
-            Spacer(modifier = Modifier.height(18.dp))
+            Spacer(modifier = Modifier.height(14.dp))
 
             Text(
-                text = when {
-                    uiState.winner == Player.X -> stringResource(R.string.status_you_win)
-                    uiState.winner == Player.O -> stringResource(R.string.status_luz_wins)
-                    uiState.isDraw -> stringResource(R.string.status_draw)
-                    uiState.isAiThinking -> stringResource(R.string.status_luz_thinking)
-                    else -> stringResource(R.string.status_your_turn)
-                },
-                color = MichiButton,
-                fontSize = 14.sp,
-                fontWeight = FontWeight.SemiBold,
-                letterSpacing = 1.5.sp
+                text = stringResource(R.string.cat_luz),
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Bold,
+                color = MichiSoftBrown
             )
 
-            Spacer(modifier = Modifier.height(28.dp))
+            Spacer(modifier = Modifier.height(4.dp))
 
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(26.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                ActionCircleButton(
-                    label = stringResource(R.string.pause),
-                    icon = Icons.Filled.Pause,
-                    onClick = onPauseClick
+//            Text(
+//                text = stringResource(R.string.player_2_ai),
+//                fontSize = 13.sp,
+//                color = MichiTextPrimary
+//            )
+        }
+
+        Surface(
+            modifier = Modifier.offset(y = (-4).dp),
+            shape = RoundedCornerShape(14.dp),
+            color = MichiWhite,
+            shadowElevation = 6.dp
+        ) {
+            Text(
+                text = if (uiState.isAiThinking) {
+                    stringResource(R.string.luz_thinking_message)
+                } else {
+                    stringResource(R.string.luz_observing_message)
+                },
+                modifier = Modifier.padding(horizontal = 14.dp, vertical = 10.dp),
+                color = MichiButton,
+                fontSize = 13.sp,
+                fontWeight = FontWeight.Medium
+            )
+        }
+    }
+}
+
+@Composable
+fun GameStatus(
+    uiState: GameUiState
+) {
+    Text(
+        text = when {
+            uiState.winner == Player.X -> stringResource(R.string.status_you_win)
+            uiState.winner == Player.O -> stringResource(R.string.status_luz_wins)
+            uiState.isDraw -> stringResource(R.string.status_draw)
+            uiState.isAiThinking -> stringResource(R.string.status_luz_thinking)
+            else -> stringResource(R.string.status_your_turn)
+        },
+        color = MichiButton,
+        fontSize = 14.sp,
+        fontWeight = FontWeight.SemiBold,
+        letterSpacing = 1.5.sp
+    )
+}
+
+@Composable
+fun GameActions(
+    onPauseClick: () -> Unit,
+    onSettingsClick: () -> Unit
+) {
+    Row(
+        horizontalArrangement = Arrangement.spacedBy(26.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        ActionCircleButton(
+            label = stringResource(R.string.pause),
+            icon = Icons.Filled.Pause,
+            onClick = onPauseClick
+        )
+
+        ActionCircleButton(
+            label = stringResource(R.string.settings_title),
+            icon = Icons.Filled.Settings,
+            onClick = onSettingsClick
+        )
+    }
+}
+
+@Composable
+fun GameCell(
+    value: Player,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Surface(
+        modifier = modifier
+            .aspectRatio(1f)
+            .clickable { onClick() },
+        shape = RoundedCornerShape(16.dp),
+        color = MichiWhite
+    ) {
+        BoxWithConstraints(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            val cellWidth = maxWidth
+
+            val iconSize = (cellWidth * 0.50f)
+                .coerceIn(42.dp, 92.dp)
+
+            when (value) {
+                Player.X -> Icon(
+                    painter = painterResource(id = R.drawable.ic_yarn),
+                    contentDescription = stringResource(R.string.cd_player_x),
+                    modifier = Modifier.size(iconSize),
+                    tint = Color.Unspecified
                 )
 
-                ActionCircleButton(
-                    label = stringResource(R.string.settings_title),
-                    icon = Icons.Filled.Settings,
-                    onClick = onSettingsClick
+                Player.O -> Icon(
+                    imageVector = Icons.Filled.Pets,
+                    contentDescription = stringResource(R.string.cd_player_o),
+                    modifier = Modifier.size(iconSize),
+                    tint = MichiO
                 )
+
+                Player.NONE -> {}
             }
         }
     }
@@ -421,6 +581,7 @@ fun GameBoard(
                 ) {
                     for (col in 0 until 3) {
                         val index = row * 3 + col
+
                         GameCell(
                             value = board[index],
                             onClick = { onCellTap(index) },
@@ -428,43 +589,6 @@ fun GameBoard(
                         )
                     }
                 }
-            }
-        }
-    }
-}
-
-@Composable
-fun GameCell(
-    value: Player,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    Surface(
-        modifier = modifier
-            .aspectRatio(1f)
-            .clickable { onClick() },
-        shape = RoundedCornerShape(16.dp),
-        color = MichiWhite
-    ) {
-        Box(
-            contentAlignment = Alignment.Center
-        ) {
-            when (value) {
-                Player.X -> Text(
-                    text = "✕",
-                    fontSize = 34.sp,
-                    color = MichiButton,
-                    fontWeight = FontWeight.Bold
-                )
-
-                Player.O -> Text(
-                    text = "◯",
-                    fontSize = 34.sp,
-                    color = MichiO,
-                    fontWeight = FontWeight.Bold
-                )
-
-                Player.NONE -> {}
             }
         }
     }

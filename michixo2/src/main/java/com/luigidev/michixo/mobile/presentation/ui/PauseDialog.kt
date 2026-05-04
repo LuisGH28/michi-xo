@@ -32,10 +32,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -48,7 +49,6 @@ import com.luigidev.michixo.mobile.presentation.theme.MichiSoftBrown
 import com.luigidev.michixo.mobile.presentation.theme.MichiSoftPink
 import com.luigidev.michixo.mobile.presentation.theme.MichiTextPrimary
 import com.luigidev.michixo.mobile.presentation.theme.MichiWhite
-import androidx.compose.ui.res.stringResource
 
 @Composable
 fun PauseDialog(
@@ -140,15 +140,15 @@ fun PauseDialog(
                         contentColor = MichiWhite
                     )
                 ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
                         Icon(
                             imageVector = Icons.Filled.PauseCircle,
                             contentDescription = stringResource(R.string.resume),
                             modifier = Modifier.size(22.dp)
                         )
+
                         Spacer(modifier = Modifier.size(8.dp))
+
                         Text(
                             text = stringResource(R.string.resume),
                             fontSize = 18.sp,
@@ -170,15 +170,15 @@ fun PauseDialog(
                         contentColor = MichiButton
                     )
                 ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
                         Icon(
                             imageVector = Icons.Filled.Home,
                             contentDescription = stringResource(R.string.exit_home),
                             modifier = Modifier.size(22.dp)
                         )
+
                         Spacer(modifier = Modifier.size(8.dp))
+
                         Text(
                             text = stringResource(R.string.exit_home),
                             fontSize = 18.sp,
@@ -245,9 +245,7 @@ fun PauseActionIcon(
             color = MichiWhite,
             shadowElevation = 3.dp
         ) {
-            Box(
-                contentAlignment = Alignment.Center
-            ) {
+            Box(contentAlignment = Alignment.Center) {
                 Icon(
                     imageVector = icon,
                     contentDescription = label,
@@ -304,6 +302,7 @@ fun PauseSettingsDialog(
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text("Music", fontSize = 16.sp, color = MichiTextPrimary)
+
                     Switch(
                         checked = musicEnabled,
                         onCheckedChange = { onMusicToggle() }
@@ -315,6 +314,7 @@ fun PauseSettingsDialog(
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text("Vibration", fontSize = 16.sp, color = MichiTextPrimary)
+
                     Switch(
                         checked = vibrationEnabled,
                         onCheckedChange = { onVibrationToggle() }
@@ -351,16 +351,107 @@ fun PauseInfoDialog(
         },
         text = {
             Column(
-                verticalArrangement = Arrangement.spacedBy(8.dp)
+                verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                Text(stringResource(R.string.info_you_are_x), fontSize = 15.sp, color = MichiTextPrimary)
-                Text(stringResource(R.string.info_luz_rival), fontSize = 15.sp, color = MichiTextPrimary)
-                Text(stringResource(R.string.info_make_three), fontSize = 15.sp, color = MichiTextPrimary)
-                Text(stringResource(R.string.info_tap_tile), fontSize = 15.sp, color = MichiTextPrimary)
-                Text(stringResource(R.string.info_version), fontSize = 15.sp, color = MichiTextPrimary)
-                Text(stringResource(R.string.info_author), fontSize = 15.sp, color = MichiTextPrimary)
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceEvenly,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    PlayerLegendItem(
+                        label = stringResource(R.string.player_yarn),
+                        isPlayer = true
+                    )
+
+                    PlayerLegendItem(
+                        label = stringResource(R.string.player_luz_paw),
+                        isPlayer = false
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(4.dp))
+
+                Text(
+                    text = stringResource(R.string.info_you_are_x),
+                    fontSize = 15.sp,
+                    color = MichiTextPrimary
+                )
+
+                Text(
+                    text = stringResource(R.string.info_luz_rival),
+                    fontSize = 15.sp,
+                    color = MichiTextPrimary
+                )
+
+                Text(
+                    text = stringResource(R.string.info_make_three),
+                    fontSize = 15.sp,
+                    color = MichiTextPrimary
+                )
+
+                Text(
+                    text = stringResource(R.string.info_tap_tile),
+                    fontSize = 15.sp,
+                    color = MichiTextPrimary
+                )
+
+                Text(
+                    text = stringResource(R.string.info_version),
+                    fontSize = 15.sp,
+                    color = MichiTextPrimary
+                )
+
+                Text(
+                    text = stringResource(R.string.info_author),
+                    fontSize = 15.sp,
+                    color = MichiTextPrimary
+                )
             }
         },
         containerColor = MichiSoftPink
     )
+}
+
+@Composable
+fun PlayerLegendItem(
+    label: String,
+    isPlayer: Boolean
+) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Surface(
+            modifier = Modifier.size(54.dp),
+            shape = CircleShape,
+            color = MichiWhite,
+            shadowElevation = 3.dp
+        ) {
+            Box(contentAlignment = Alignment.Center) {
+                if (isPlayer) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_yarn),
+                        contentDescription = label,
+                        modifier = Modifier.size(34.dp),
+                        tint = Color.Unspecified
+                    )
+                } else {
+                    Icon(
+                        imageVector = Icons.Filled.Pets,
+                        contentDescription = label,
+                        modifier = Modifier.size(32.dp),
+                        tint = MichiButton
+                    )
+                }
+            }
+        }
+
+        Spacer(modifier = Modifier.height(6.dp))
+
+        Text(
+            text = label,
+            fontSize = 13.sp,
+            color = MichiSoftBrown,
+            fontWeight = FontWeight.Bold
+        )
+    }
 }

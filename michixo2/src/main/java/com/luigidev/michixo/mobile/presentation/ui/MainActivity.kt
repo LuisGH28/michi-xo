@@ -9,11 +9,13 @@ import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.luigidev.michixo.mobile.audio.MusicManager
+import com.luigidev.michixo.mobile.data.NotificationPreferences
 import com.luigidev.michixo.mobile.data.UserBehaviorStore
 import com.luigidev.michixo.mobile.notifications.NotificationHelper
 import com.luigidev.michixo.mobile.notifications.NotificationScheduler
@@ -33,10 +35,69 @@ class MainActivity : AppCompatActivity() {
                 val vm: GameViewModel = viewModel()
                 val context = LocalContext.current
                 val uiState = vm.uiState.collectAsStateWithLifecycle().value
-                val behaviorStore = UserBehaviorStore(context)
+
+                val behaviorStore = remember {
+                    UserBehaviorStore(context)
+                }
+
+                val notificationPreferences = remember {
+                    NotificationPreferences(context)
+                }
 
                 vm.onGameFinished = { result ->
                     behaviorStore.saveGamePlayed(result)
+                }
+
+                val notificationPermissionLauncher = rememberLauncherForActivityResult(
+                    contract = ActivityResultContracts.RequestPermission()
+                ) { granted ->
+                    notificationPreferences.setPermissionAsked()
+
+                    if (granted) {
+                        notificationPreferences.setNotificationsEnabled(true)
+                        vm.setNotificationsEnabled(true)
+                        NotificationScheduler.scheduleDailyReminder(context)
+                    } else {
+                        notificationPreferences.setNotificationsEnabled(false)
+                        vm.setNotificationsEnabled(false)
+                        NotificationScheduler.cancelDailyReminder(context)
+                    }
+                }
+
+                LaunchedEffect(Unit) {
+                    val savedNotificationsEnabled =
+                        notificationPreferences.areNotificationsEnabled()
+
+                    vm.setNotificationsEnabled(savedNotificationsEnabled)
+
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                        val permissionGranted = ContextCompat.checkSelfPermission(
+                            context,
+                            Manifest.permission.POST_NOTIFICATIONS
+                        ) == PackageManager.PERMISSION_GRANTED
+
+                        when {
+                            permissionGranted && savedNotificationsEnabled -> {
+                                NotificationScheduler.scheduleDailyReminder(context)
+                            }
+
+                            !permissionGranted && !notificationPreferences.wasPermissionAsked() -> {
+                                notificationPermissionLauncher.launch(
+                                    Manifest.permission.POST_NOTIFICATIONS
+                                )
+                            }
+
+                            !permissionGranted -> {
+                                notificationPreferences.setNotificationsEnabled(false)
+                                vm.setNotificationsEnabled(false)
+                                NotificationScheduler.cancelDailyReminder(context)
+                            }
+                        }
+                    } else {
+                        if (savedNotificationsEnabled) {
+                            NotificationScheduler.scheduleDailyReminder(context)
+                        }
+                    }
                 }
 
                 LaunchedEffect(uiState.musicEnabled, uiState.screen) {
@@ -47,29 +108,19 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
 
-                val notificationPermissionLauncher = rememberLauncherForActivityResult(
-                    contract = ActivityResultContracts.RequestPermission()
-                ) { granted ->
-                    if (granted) {
-                        vm.setNotificationsEnabled(true)
-                        NotificationScheduler.scheduleDailyReminder(context)
-                    } else {
-                        vm.setNotificationsEnabled(false)
-                    }
-                }
-
                 TicTacToeScreen(
                     vm = vm,
                     onExitApp = { finish() },
                     onNotificationsToggle = { enabled ->
                         if (enabled) {
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                                val alreadyGranted = ContextCompat.checkSelfPermission(
+                                val permissionGranted = ContextCompat.checkSelfPermission(
                                     context,
                                     Manifest.permission.POST_NOTIFICATIONS
                                 ) == PackageManager.PERMISSION_GRANTED
 
-                                if (alreadyGranted) {
+                                if (permissionGranted) {
+                                    notificationPreferences.setNotificationsEnabled(true)
                                     vm.setNotificationsEnabled(true)
                                     NotificationScheduler.scheduleDailyReminder(context)
                                 } else {
@@ -78,10 +129,12 @@ class MainActivity : AppCompatActivity() {
                                     )
                                 }
                             } else {
+                                notificationPreferences.setNotificationsEnabled(true)
                                 vm.setNotificationsEnabled(true)
                                 NotificationScheduler.scheduleDailyReminder(context)
                             }
                         } else {
+                            notificationPreferences.setNotificationsEnabled(false)
                             vm.setNotificationsEnabled(false)
                             NotificationScheduler.cancelDailyReminder(context)
                         }

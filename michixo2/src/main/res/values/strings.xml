@@ -7,7 +7,7 @@
     <string name="cd_luz_thinking">Luz thinking</string>
 
     <string name="cat_luz">Cat Luz</string>
-    <string name="player_2_ai">Player 2 (AI)</string>
+<!--    <string name="player_2_ai">Player 2 (AI)</string>-->
 
     <string name="luz_thinking_message">Im thinking meow</string>
     <string name="luz_observing_message">I see you, human</string>
@@ -21,8 +21,11 @@
     <string name="pause">PAUSE</string>
     <string name="settings">SETTINGS</string>
 
-    <string name="cd_player_x">Player X</string>
-    <string name="cd_player_o">Player O</string>
+    <string name="cd_player_x">Yarn ball</string>
+    <string name="cd_player_o">Luz paw</string>
+    <string name="player_yarn">You</string>
+    <string name="player_luz_paw">Luz</string>
+    <string name="info_you_are_x">• You play with the yarn ball</string>
 
     <!-- Pause Dialog -->
     <string name="cd_luz_bored">Luz bored</string>
@@ -46,8 +49,8 @@
     <!-- Info dialog -->
     <string name="close">Close</string>
     <string name="about_michi">About Michi XO</string>
-    <string name="info_you_are_x">• You are X</string>
-    <string name="info_luz_rival">• Luz is your rival</string>
+
+    <string name="info_luz_rival">• Luz plays with the paw</string>
     <string name="info_make_three">• Make 3 in a row to win</string>
     <string name="info_tap_tile">• Tap a tile to play</string>
     <string name="info_version">• Version 1.4</string>

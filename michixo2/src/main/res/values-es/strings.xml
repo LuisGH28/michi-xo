@@ -7,7 +7,7 @@
     <string name="cd_luz_thinking">Luz pensando</string>
 
     <string name="cat_luz">Gatita Luz</string>
-    <string name="player_2_ai">Jugador 2 (IA)</string>
+<!--    <string name="player_2_ai">Jugador 2 (IA)</string>-->
 
     <string name="luz_thinking_message">Estoy pensando… miau</string>
     <string name="luz_observing_message">Te veo, humano</string>
@@ -21,8 +21,11 @@
     <string name="pause">PAUSA</string>
     <string name="settings">AJUSTES</string>
 
-    <string name="cd_player_x">Jugador X</string>
-    <string name="cd_player_o">Jugador O</string>
+    <string name="cd_player_x">Estambre</string>
+    <string name="cd_player_o">Patita de Luz</string>
+    <string name="player_yarn">Tú</string>
+    <string name="player_luz_paw">Luz</string>
+    <string name="info_you_are_x">• Tú juegas con el estambre</string>
 
     <string name="cd_luz_bored">Luz aburrida</string>
 
@@ -44,8 +47,8 @@
 
     <string name="close">Cerrar</string>
     <string name="about_michi">Acerca de Michi XO</string>
-    <string name="info_you_are_x">• Tú eres X</string>
-    <string name="info_luz_rival">• Luz es tu rival</string>
+
+    <string name="info_luz_rival">• Luz juega con la patita</string>
     <string name="info_make_three">• Haz 3 en línea para ganar</string>
     <string name="info_tap_tile">• Toca una casilla para jugar</string>
     <string name="info_version">• Versión 1.4</string>
