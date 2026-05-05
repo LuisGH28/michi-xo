@@ -1,5 +1,14 @@
 # 🐱 MichiXO – Tic Tac Toe for Wear OS & Mobile
 
+![Kotlin](https://img.shields.io/badge/Kotlin-1.9+-purple?logo=kotlin)
+![Android](https://img.shields.io/badge/Android-Platform-green?logo=android)
+![Jetpack Compose](https://img.shields.io/badge/Jetpack%20Compose-UI-blue)
+![Wear OS](https://img.shields.io/badge/Wear%20OS-Supported-black?logo=android)
+![Architecture](https://img.shields.io/badge/Architecture-Clean%20Architecture-blue)
+![AI](https://img.shields.io/badge/AI-Game%20Logic-yellow)
+![Status](https://img.shields.io/badge/Status-Active-success)
+![Google Play](https://img.shields.io/badge/Google%20Play-Coming%20Soon-green)
+
 A kawaii-inspired Tic Tac Toe game where you challenge **Luz**, a playful AI cat, in a minimalist and optimized experience for both **smartwatches and mobile devices**.
 
 ---
