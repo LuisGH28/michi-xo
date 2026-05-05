@@ -1,5 +1,11 @@
 # 🐱 MichiXO – Tic Tac Toe for Wear OS & Mobile
 
+<p align="center">
+  <a href="https://github.com/LuisGH28/michixo">
+    <img src="banner.png" alt="MichiXO Banner" width="100%" />
+  </a>
+</p>
+
 ![Kotlin](https://img.shields.io/badge/Kotlin-1.9+-purple?logo=kotlin)
 ![Android](https://img.shields.io/badge/Android-Platform-green?logo=android)
 ![Jetpack Compose](https://img.shields.io/badge/Jetpack%20Compose-UI-blue)
