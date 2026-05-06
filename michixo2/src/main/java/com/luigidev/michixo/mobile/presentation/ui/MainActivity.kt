@@ -43,6 +43,9 @@ class MainActivity : AppCompatActivity() {
                 val notificationPreferences = remember {
                     NotificationPreferences(context)
                 }
+                val introPreferences = remember {
+                    context.getSharedPreferences("michixo_intro", 0)
+                }
 
                 vm.onGameFinished = { result ->
                     behaviorStore.saveGamePlayed(result)
@@ -65,6 +68,13 @@ class MainActivity : AppCompatActivity() {
                 }
 
                 LaunchedEffect(Unit) {
+                    if (!introPreferences.getBoolean("home_family_greeting_seen", false)) {
+                        introPreferences.edit()
+                            .putBoolean("home_family_greeting_seen", true)
+                            .apply()
+                        vm.showHomeFamilyGreeting()
+                    }
+
                     val savedNotificationsEnabled =
                         notificationPreferences.areNotificationsEnabled()
 
@@ -105,6 +115,17 @@ class MainActivity : AppCompatActivity() {
                         MusicManager.start(context)
                     } else {
                         MusicManager.pause()
+                    }
+                }
+
+                LaunchedEffect(uiState.screen) {
+                    if (uiState.screen == Screen.SUPER_INTRO &&
+                        !introPreferences.getBoolean("super_family_greeting_seen", false)
+                    ) {
+                        introPreferences.edit()
+                            .putBoolean("super_family_greeting_seen", true)
+                            .apply()
+                        vm.showSuperFamilyGreeting()
                     }
                 }
 

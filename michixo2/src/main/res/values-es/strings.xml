@@ -1,12 +1,14 @@
 <resources>
-    <string name="lest_play">Vamos a jugar con Luz</string>
+    <string name="lest_play">Vamos a jugar con Luz y sus hermanos</string>
     <string name="play">Jugar</string>
+    <string name="super_gato">Super Gato</string>
     <string name="app_name">MichiXO</string>
 
     <string name="cd_pets">Patitas</string>
     <string name="cd_luz_thinking">Luz pensando</string>
 
     <string name="cat_luz">Gatita Luz</string>
+    <string name="cat_luz_short">Luz</string>
 <!--    <string name="player_2_ai">Jugador 2 (IA)</string>-->
 
     <string name="luz_thinking_message">Estoy pensando… miau</string>
@@ -31,6 +33,7 @@
 
     <string name="pause_title">Michi XO</string>
     <string name="pause_subtitle">Luz dice "¿Ya te aburriste?"</string>
+    <string name="pause_subtitle_character">%1$s dice "¿Ya te aburriste?"</string>
 
     <string name="resume">Continuar</string>
     <string name="exit_home">Salir al inicio</string>
@@ -49,6 +52,7 @@
     <string name="about_michi">Acerca de Michi XO</string>
 
     <string name="info_luz_rival">• Luz juega con la patita</string>
+    <string name="info_rival_plays_paw">• %1$s juega con la patita</string>
     <string name="info_make_three">• Haz 3 en línea para ganar</string>
     <string name="info_tap_tile">• Toca una casilla para jugar</string>
     <string name="info_version">• Versión 1.4</string>
@@ -70,11 +74,42 @@
 
     <string name="result_you_win">TÚ GANAS</string>
     <string name="result_luz_wins">LUZ GANA</string>
+    <string name="result_opponent_wins">%1$s GANA</string>
     <string name="result_draw">EMPATE</string>
 
     <string name="result_msg_you_win">Luz se ve triste miau.</string>
+    <string name="result_msg_you_win_super">%1$s se ve triste miau.</string>
     <string name="result_msg_luz_wins">¡Soy la reina de este juego, humano!</string>
+    <string name="result_msg_opponent_wins">%1$s conquistó el tablero grande.</string>
+    <string name="result_msg_lily_wins">¡Soy la reina del Super Gato, humano!</string>
+    <string name="result_msg_lily_wins_2">Soy chiquita, pero este tablero ya es mío.</string>
+    <string name="result_msg_lily_wins_3">Miau, gané con patitas suaves y mucha estrategia.</string>
+    <string name="result_msg_coco_wins">¡Soy el rey del Super Gato, humano!</string>
+    <string name="result_msg_coco_wins_2">Te lo dije, humano: veamos si eras rival para mí.</string>
+    <string name="result_msg_coco_wins_3">Ronroneo de victoria para Coco.</string>
+    <string name="result_msg_salem_wins">Soy el rey de este juego difícil, humano. Miaaau.</string>
+    <string name="result_msg_salem_wins_2">La noche estaba de mi lado. Gané.</string>
+    <string name="result_msg_salem_wins_3">Difícil, misterioso y victorioso. Miaaau.</string>
     <string name="result_msg_draw">Estuvo cerca, humano.</string>
+    <string name="result_msg_draw_super">Estuvo cerca contra %1$s, humano.</string>
+    <string name="result_msg_lily_draw">Empatamos, humano. Eso estuvo bonito.</string>
+    <string name="result_msg_lily_draw_2">Casi casi, pero Lily todavía sonríe.</string>
+    <string name="result_msg_lily_draw_3">Empate suavecito. ¿Otra?</string>
+    <string name="result_msg_coco_draw">Empate contra Coco. Nada mal, humano.</string>
+    <string name="result_msg_coco_draw_2">Miau, parece que sí eres rival para mí.</string>
+    <string name="result_msg_coco_draw_3">Quedamos parejos. Coco exige revancha.</string>
+    <string name="result_msg_salem_draw">Empate. Interesante, humano.</string>
+    <string name="result_msg_salem_draw_2">No ganaste, pero tampoco caí. Curioso.</string>
+    <string name="result_msg_salem_draw_3">La sombra no decidió ganador esta vez.</string>
+    <string name="result_msg_lily_loses">Lily se ve triste miau.</string>
+    <string name="result_msg_lily_loses_2">Oh no, me ganaste aunque soy buena en esto.</string>
+    <string name="result_msg_lily_loses_3">Lily acepta la derrota con ojitos grandes.</string>
+    <string name="result_msg_coco_loses">Coco se ve sorprendido miau.</string>
+    <string name="result_msg_coco_loses_2">Bueno, humano, hoy sí fuiste rival para mí.</string>
+    <string name="result_msg_coco_loses_3">Coco perdió, pero ya está planeando la revancha.</string>
+    <string name="result_msg_salem_loses">Salem se queda en silencio... por ahora.</string>
+    <string name="result_msg_salem_loses_2">Me ganaste, humano. No te acostumbres.</string>
+    <string name="result_msg_salem_loses_3">La noche recordará esta derrota.</string>
 
     <string name="match_result">RESULTADO DE LA PARTIDA</string>
     <string name="match_result_fallback">Resultado de la partida</string>
@@ -116,6 +151,30 @@
     <string name="start_game">Jugar</string>
     <string name="cancel">Cancelar</string>
 
+    <string name="super_intro_title">Luz presenta a los retadores de Super Gato</string>
+    <string name="super_intro_body">Este modo tiene nueve tableros pequeños. Gana tableros pequeños para conquistar el tablero grande. Lily, Coco y Salem ya están listos.</string>
+    <string name="choose_opponent">Elige a tu contrincante</string>
+    <string name="opponent_lily">Lily</string>
+    <string name="opponent_coco">Coco</string>
+    <string name="opponent_salem">Salem</string>
+    <string name="opponent_lily_desc">Nivel fácil. Dulce, tranquila y perfecta para aprender.</string>
+    <string name="opponent_coco_desc">Nivel intermedio. Curioso y un poco más estratégico.</string>
+    <string name="opponent_salem_desc">Nivel difícil. Callado, misterioso y muy listo.</string>
+    <string name="super_tutorial">Tutorial con Lily</string>
+    <string name="lily_tutorial_speech">Yo te enseño. Juega en un tablero pequeño; la casilla que elijas manda al siguiente jugador al tablero pequeño equivalente.</string>
+    <string name="super_tutorial_steps">Gana un tablero pequeño haciendo tres en línea. Conquista tres tableros pequeños en línea para ganar Super Gato. Si el tablero al que mandas a tu rival ya está cerrado, podrá jugar en cualquier tablero libre.</string>
+    <string name="super_status_any_board">• JUEGA EN CUALQUIER TABLERO LIBRE</string>
+    <string name="super_status_board">• JUEGA EN EL TABLERO %1$d</string>
+    <string name="super_status_thinking">• %1$s ESTÁ PENSANDO</string>
+    <string name="super_greeting_lily">Hola humano, yo soy Lily, tu contrincante ahora. Soy la bebé de todos, así que te deseo suerte porque aunque estoy chiquita soy buena en esto.</string>
+    <string name="super_greeting_coco">Hola humano, veo que ya conociste a Lily, pero veamos si para mí eres rival. Miau.</string>
+    <string name="super_greeting_salem">Mi nombre es Salem y yo te haré el juego difícil jeje, digo miaaau.</string>
+    <string name="super_greeting_continue">Jugar</string>
+    <string name="home_family_greeting">Hola humano, como me sentía sola por aquí te presento a mis hermanos: Lily, Coco y Salem. A ellos los podrás encontrar en Super Gato. Te deseo mucha suerte con ellos.</string>
+    <string name="super_family_greeting">Hola humano, nosotros somos los super michis. Bienvenido a este nuevo modo de juego.</string>
+    <string name="you_short">Tú</string>
+    <string name="vs">VS</string>
+
     <string name="notification_title">MichiXO te extraña</string>
     <string name="notification_body">Luz está esperando otra partida 🐾</string>
     <string name="notifications_permission_denied">Las notificaciones están desactivadas porque no se concedió el permiso.</string>
@@ -135,11 +194,3 @@
     <string name="notification_draw_title">Hay que desempatar</string>
     <string name="notification_draw_body">La última partida quedó empatada ✨</string>
 </resources>
-
-
-
-
-
-
-
-

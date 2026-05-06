@@ -61,6 +61,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.luigidev.michixo.mobile.R
+import com.luigidev.michixo.mobile.presentation.GameMode
 import com.luigidev.michixo.mobile.presentation.GameUiState
 import com.luigidev.michixo.mobile.presentation.GameViewModel
 import com.luigidev.michixo.mobile.presentation.Screen
@@ -135,6 +136,10 @@ fun TicTacToeScreen(
                 vm.backToHome()
             }
 
+            uiState.screen == Screen.SUPER_INTRO || uiState.screen == Screen.SUPER_TUTORIAL -> {
+                vm.backToHome()
+            }
+
             uiState.screen == Screen.GAME -> {
                 showPauseDialog = true
             }
@@ -151,6 +156,20 @@ fun TicTacToeScreen(
         when (screen) {
             Screen.HOME -> HomeScreen(vm)
 
+            Screen.SUPER_INTRO -> SuperGatoIntroScreen(
+                selectedOpponent = uiState.opponent,
+                showFamilyGreeting = uiState.showSuperFamilyGreeting,
+                onOpponentSelected = { opponent -> vm.startSuperGato(opponent) },
+                onTutorialClick = { vm.showSuperGatoTutorial() },
+                onFamilyGreetingDismiss = { vm.dismissSuperFamilyGreeting() },
+                onBackClick = { vm.backToHome() }
+            )
+
+            Screen.SUPER_TUTORIAL -> SuperGatoTutorialScreen(
+                onStartClick = { vm.startSuperGato(uiState.opponent) },
+                onBackClick = { vm.showSuperGatoIntro() }
+            )
+
             Screen.GAME -> {
                 GameScreen(
                     uiState = uiState,
@@ -160,6 +179,13 @@ fun TicTacToeScreen(
                         }
                         vm.onCellTap(index)
                     },
+                    onSuperCellTap = { boardIndex, cellIndex ->
+                        if (uiState.vibrationEnabled) {
+                            VibrationHelper.vibrate(context, 45)
+                        }
+                        vm.onSuperCellTap(boardIndex, cellIndex)
+                    },
+                    onSuperGreetingDismiss = { vm.dismissSuperGreeting() },
                     onPauseClick = { showPauseDialog = true },
                     onSettingsClick = { showPauseSettingsDialog = true }
                 )
@@ -167,6 +193,11 @@ fun TicTacToeScreen(
                 if (showPauseDialog) {
                     PauseDialog(
                         isVolumeEnabled = uiState.musicEnabled,
+                        opponent = if (uiState.gameMode == GameMode.SUPER_GATO) {
+                            uiState.opponent
+                        } else {
+                            null
+                        },
                         onResume = { showPauseDialog = false },
                         onExitHome = {
                             showPauseDialog = false
@@ -198,6 +229,11 @@ fun TicTacToeScreen(
 
                 if (showInfoDialog) {
                     PauseInfoDialog(
+                        opponent = if (uiState.gameMode == GameMode.SUPER_GATO) {
+                            uiState.opponent
+                        } else {
+                            null
+                        },
                         onDismiss = { showInfoDialog = false }
                     )
                 }
@@ -205,7 +241,13 @@ fun TicTacToeScreen(
 
             Screen.RESULT -> ResultScreen(
                 uiState = uiState,
-                onPlayAgain = { vm.startGame() },
+                onPlayAgain = {
+                    if (uiState.gameMode == GameMode.SUPER_GATO) {
+                        vm.startSuperGato(uiState.opponent)
+                    } else {
+                        vm.startGame()
+                    }
+                },
                 onHome = { vm.backToHome() }
             )
 
@@ -240,6 +282,11 @@ private fun screenTransition(target: Screen): ContentTransform {
                     (fadeOut() + slideOutHorizontally(targetOffsetX = { -it / 6 }))
         }
 
+        Screen.SUPER_INTRO, Screen.SUPER_TUTORIAL -> {
+            (fadeIn() + slideInVertically(initialOffsetY = { it / 6 })) togetherWith
+                    (fadeOut() + slideOutVertically(targetOffsetY = { -it / 8 }))
+        }
+
         Screen.HOME -> {
             (fadeIn() + slideInHorizontally(initialOffsetX = { -it / 4 })) togetherWith
                     (fadeOut() + slideOutHorizontally(targetOffsetX = { it / 6 }))
@@ -251,6 +298,8 @@ private fun screenTransition(target: Screen): ContentTransform {
 fun GameScreen(
     uiState: GameUiState,
     onCellTap: (Int) -> Unit,
+    onSuperCellTap: (Int, Int) -> Unit = { _, _ -> },
+    onSuperGreetingDismiss: () -> Unit = {},
     onPauseClick: () -> Unit = {},
     onSettingsClick: () -> Unit = {}
 ) {
@@ -266,7 +315,16 @@ fun GameScreen(
             .navigationBarsPadding()
             .padding(horizontal = 22.dp, vertical = 16.dp)
     ) {
-        if (isLandscape) {
+        if (uiState.gameMode == GameMode.SUPER_GATO) {
+            SuperGatoGameContent(
+                uiState = uiState,
+                isLandscape = isLandscape,
+                onCellTap = onSuperCellTap,
+                onGreetingDismiss = onSuperGreetingDismiss,
+                onPauseClick = onPauseClick,
+                onSettingsClick = onSettingsClick
+            )
+        } else if (isLandscape) {
             LandscapeGameContent(
                 uiState = uiState,
                 onCellTap = onCellTap,
@@ -291,6 +349,9 @@ fun PortraitGameContent(
     onPauseClick: () -> Unit,
     onSettingsClick: () -> Unit
 ) {
+    val configuration = LocalConfiguration.current
+    val isTablet = configuration.smallestScreenWidthDp >= 600
+
     Column(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
@@ -298,23 +359,23 @@ fun PortraitGameContent(
 
         GameHeader()
 
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(if (isTablet) 26.dp else 20.dp))
 
         LuzHeader(uiState = uiState)
 
-        Spacer(modifier = Modifier.height(26.dp))
+        Spacer(modifier = Modifier.height(if (isTablet) 34.dp else 26.dp))
 
         GameBoard(
             board = uiState.board,
             onCellTap = onCellTap,
-            modifier = Modifier.fillMaxWidth(0.9f)
+            modifier = Modifier.fillMaxWidth(if (isTablet) 0.62f else 0.9f)
         )
 
-        Spacer(modifier = Modifier.height(18.dp))
+        Spacer(modifier = Modifier.height(if (isTablet) 24.dp else 18.dp))
 
         GameStatus(uiState = uiState)
 
-        Spacer(modifier = Modifier.height(28.dp))
+        Spacer(modifier = Modifier.height(if (isTablet) 34.dp else 28.dp))
 
         GameActions(
             onPauseClick = onPauseClick,
@@ -330,10 +391,13 @@ fun LandscapeGameContent(
     onPauseClick: () -> Unit,
     onSettingsClick: () -> Unit
 ) {
+    val configuration = LocalConfiguration.current
+    val isTablet = configuration.smallestScreenWidthDp >= 600
+
     Row(
         modifier = Modifier.fillMaxSize(),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(24.dp)
+        horizontalArrangement = Arrangement.spacedBy(if (isTablet) 34.dp else 24.dp)
     ) {
         Column(
             modifier = Modifier
@@ -369,7 +433,7 @@ fun LandscapeGameContent(
             GameBoard(
                 board = uiState.board,
                 onCellTap = onCellTap,
-                modifier = Modifier.fillMaxWidth(0.82f)
+                modifier = Modifier.fillMaxWidth(if (isTablet) 0.72f else 0.82f)
             )
         }
     }

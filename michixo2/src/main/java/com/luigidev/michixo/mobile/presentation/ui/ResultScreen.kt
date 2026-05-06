@@ -50,6 +50,8 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.luigidev.michixo.mobile.R
+import com.luigidev.michixo.mobile.presentation.CatOpponent
+import com.luigidev.michixo.mobile.presentation.GameMode
 import com.luigidev.michixo.mobile.presentation.GameUiState
 import com.luigidev.michixo.mobile.presentation.Screen
 import com.luigidev.michixo.mobile.presentation.theme.MichiBoard
@@ -306,6 +308,8 @@ fun ResultText(
     Text(
         text = when {
             uiState.winner == Player.X -> stringResource(R.string.result_you_win)
+            uiState.winner == Player.O && uiState.gameMode == GameMode.SUPER_GATO ->
+                stringResource(R.string.result_opponent_wins, uiState.opponent.resultName())
             uiState.winner == Player.O -> stringResource(R.string.result_luz_wins)
             uiState.isDraw -> stringResource(R.string.result_draw)
             else -> stringResource(R.string.match_result_fallback)
@@ -327,6 +331,8 @@ fun ResultMessage(
     ) {
         Text(
             text = when {
+                uiState.gameMode == GameMode.SUPER_GATO && uiState.resultMessageRes != null ->
+                    stringResource(uiState.resultMessageRes)
                 uiState.winner == Player.X -> stringResource(R.string.result_msg_you_win)
                 uiState.winner == Player.O -> stringResource(R.string.result_msg_luz_wins)
                 uiState.isDraw -> stringResource(R.string.result_msg_draw)
@@ -337,6 +343,15 @@ fun ResultMessage(
             fontSize = 18.sp,
             fontWeight = FontWeight.Medium
         )
+    }
+}
+
+@Composable
+private fun CatOpponent.resultName(): String {
+    return when (this) {
+        CatOpponent.LILY -> stringResource(R.string.opponent_lily)
+        CatOpponent.COCO -> stringResource(R.string.opponent_coco)
+        CatOpponent.SALEM -> stringResource(R.string.opponent_salem)
     }
 }
 
