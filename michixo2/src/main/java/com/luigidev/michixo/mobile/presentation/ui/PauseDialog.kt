@@ -14,13 +14,13 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.VolumeOff
+import androidx.compose.material.icons.automirrored.filled.VolumeUp
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.PauseCircle
 import androidx.compose.material.icons.filled.Pets
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.filled.VolumeOff
-import androidx.compose.material.icons.filled.VolumeUp
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -41,6 +41,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.luigidev.michixo.mobile.R
+import com.luigidev.michixo.mobile.presentation.CatOpponent
 import com.luigidev.michixo.mobile.presentation.theme.MichiButton
 import com.luigidev.michixo.mobile.presentation.theme.MichiDeepPink
 import com.luigidev.michixo.mobile.presentation.theme.MichiFont
@@ -53,12 +54,15 @@ import com.luigidev.michixo.mobile.presentation.theme.MichiWhite
 @Composable
 fun PauseDialog(
     isVolumeEnabled: Boolean,
+    opponent: CatOpponent? = null,
     onResume: () -> Unit,
     onExitHome: () -> Unit,
     onOpenSettings: () -> Unit,
     onToggleVolume: () -> Unit,
     onOpenInfo: () -> Unit
 ) {
+    val characterName = opponent?.displayName() ?: stringResource(R.string.cat_luz_short)
+
     AlertDialog(
         onDismissRequest = onResume,
         confirmButton = {},
@@ -81,14 +85,22 @@ fun PauseDialog(
                 Spacer(modifier = Modifier.height(18.dp))
 
                 Box {
-                    Image(
-                        painter = painterResource(id = R.drawable.luz_bored),
-                        contentDescription = stringResource(R.string.cd_luz_bored),
-                        modifier = Modifier
-                            .size(120.dp)
-                            .clip(CircleShape),
-                        contentScale = ContentScale.Crop
-                    )
+                    if (opponent == null) {
+                        Image(
+                            painter = painterResource(id = R.drawable.luz_bored),
+                            contentDescription = stringResource(R.string.cd_luz_bored),
+                            modifier = Modifier
+                                .size(120.dp)
+                                .clip(CircleShape),
+                            contentScale = ContentScale.Crop
+                        )
+                    } else {
+                        CatAvatar(
+                            name = characterName,
+                            opponent = opponent,
+                            modifier = Modifier.size(120.dp)
+                        )
+                    }
 
                     Surface(
                         modifier = Modifier
@@ -111,7 +123,7 @@ fun PauseDialog(
                 Spacer(modifier = Modifier.height(16.dp))
 
                 Text(
-                    text = stringResource(R.string.pause_title),
+                    text = characterName,
                     fontFamily = MichiFont,
                     fontSize = 24.sp,
                     color = MichiSoftBrown,
@@ -121,7 +133,7 @@ fun PauseDialog(
                 Spacer(modifier = Modifier.height(8.dp))
 
                 Text(
-                    text = stringResource(R.string.pause_subtitle),
+                    text = stringResource(R.string.pause_subtitle_character, characterName),
                     color = MichiButton,
                     fontSize = 18.sp,
                     fontWeight = FontWeight.SemiBold
@@ -201,7 +213,7 @@ fun PauseDialog(
                     )
 
                     PauseActionIcon(
-                        icon = if (isVolumeEnabled) Icons.Filled.VolumeUp else Icons.Filled.VolumeOff,
+                        icon = if (isVolumeEnabled) Icons.AutoMirrored.Filled.VolumeUp else Icons.AutoMirrored.Filled.VolumeOff,
                         label = if (isVolumeEnabled) stringResource(R.string.sound_on) else stringResource(R.string.muted),
                         onClick = onToggleVolume
                     )
@@ -301,7 +313,7 @@ fun PauseSettingsDialog(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    Text("Music", fontSize = 16.sp, color = MichiTextPrimary)
+                    Text(stringResource(R.string.music), fontSize = 16.sp, color = MichiTextPrimary)
 
                     Switch(
                         checked = musicEnabled,
@@ -313,7 +325,7 @@ fun PauseSettingsDialog(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    Text("Vibration", fontSize = 16.sp, color = MichiTextPrimary)
+                    Text(stringResource(R.string.vibration), fontSize = 16.sp, color = MichiTextPrimary)
 
                     Switch(
                         checked = vibrationEnabled,
@@ -328,8 +340,11 @@ fun PauseSettingsDialog(
 
 @Composable
 fun PauseInfoDialog(
+    opponent: CatOpponent? = null,
     onDismiss: () -> Unit
 ) {
+    val rivalName = opponent?.displayName() ?: stringResource(R.string.cat_luz_short)
+
     AlertDialog(
         onDismissRequest = onDismiss,
         confirmButton = {
@@ -364,7 +379,7 @@ fun PauseInfoDialog(
                     )
 
                     PlayerLegendItem(
-                        label = stringResource(R.string.player_luz_paw),
+                        label = rivalName,
                         isPlayer = false
                     )
                 }
@@ -378,7 +393,7 @@ fun PauseInfoDialog(
                 )
 
                 Text(
-                    text = stringResource(R.string.info_luz_rival),
+                    text = stringResource(R.string.info_rival_plays_paw, rivalName),
                     fontSize = 15.sp,
                     color = MichiTextPrimary
                 )

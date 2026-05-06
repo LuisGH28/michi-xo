@@ -1,12 +1,14 @@
 <resources>
-    <string name="lest_play">Lets play with Luz</string>
+    <string name="lest_play">Lets play with Luz and her brothers</string>
     <string name="play">Play</string>
+    <string name="super_gato">Super Cat</string>
     <string name="app_name">MichiXO</string>
 
     <string name="cd_pets">Pets</string>
     <string name="cd_luz_thinking">Luz thinking</string>
 
     <string name="cat_luz">Cat Luz</string>
+    <string name="cat_luz_short">Luz</string>
 <!--    <string name="player_2_ai">Player 2 (AI)</string>-->
 
     <string name="luz_thinking_message">Im thinking meow</string>
@@ -31,6 +33,7 @@
     <string name="cd_luz_bored">Luz bored</string>
     <string name="pause_title">Michi XO</string>
     <string name="pause_subtitle">Luz says &quot;Bored already?&quot;</string>
+    <string name="pause_subtitle_character">%1$s says &quot;Bored already?&quot;</string>
 
     <string name="resume">Resume</string>
     <string name="exit_home">Exit to Home</string>
@@ -51,6 +54,7 @@
     <string name="about_michi">About Michi XO</string>
 
     <string name="info_luz_rival">• Luz plays with the paw</string>
+    <string name="info_rival_plays_paw">• %1$s plays with the paw</string>
     <string name="info_make_three">• Make 3 in a row to win</string>
     <string name="info_tap_tile">• Tap a tile to play</string>
     <string name="info_version">• Version 1.4</string>
@@ -71,11 +75,42 @@
 
     <string name="result_you_win">YOU WIN</string>
     <string name="result_luz_wins">LUZ WINS</string>
+    <string name="result_opponent_wins">%1$s WINS</string>
     <string name="result_draw">DRAW</string>
 
     <string name="result_msg_you_win">Luz looks sad meow.</string>
+    <string name="result_msg_you_win_super">%1$s looks sad meow.</string>
     <string name="result_msg_luz_wins">Im the queen of this game, human!</string>
+    <string name="result_msg_opponent_wins">%1$s claimed the big board.</string>
+    <string name="result_msg_lily_wins">I am the queen of Super Cat, human!</string>
+    <string name="result_msg_lily_wins_2">I may be tiny, but this big board is mine.</string>
+    <string name="result_msg_lily_wins_3">Meow, I won with soft paws and smart moves.</string>
+    <string name="result_msg_coco_wins">I am the king of Super Cat, human!</string>
+    <string name="result_msg_coco_wins_2">I told you, human: let us see if you were a rival for me.</string>
+    <string name="result_msg_coco_wins_3">Victory purrs for Coco.</string>
+    <string name="result_msg_salem_wins">I am the king of this hard game, human. Meooow.</string>
+    <string name="result_msg_salem_wins_2">The night was on my side. I won.</string>
+    <string name="result_msg_salem_wins_3">Hard, mysterious and victorious. Meooow.</string>
     <string name="result_msg_draw">That was close, human.</string>
+    <string name="result_msg_draw_super">That was close against %1$s, human.</string>
+    <string name="result_msg_lily_draw">We tied, human. That was sweet.</string>
+    <string name="result_msg_lily_draw_2">Almost, almost, but Lily still smiles.</string>
+    <string name="result_msg_lily_draw_3">A soft little draw. Again?</string>
+    <string name="result_msg_coco_draw">A draw against Coco. Not bad, human.</string>
+    <string name="result_msg_coco_draw_2">Meow, maybe you are a rival for me.</string>
+    <string name="result_msg_coco_draw_3">We are even. Coco demands a rematch.</string>
+    <string name="result_msg_salem_draw">A draw. Interesting, human.</string>
+    <string name="result_msg_salem_draw_2">You did not win, but I did not fall. Curious.</string>
+    <string name="result_msg_salem_draw_3">The shadow chose no winner this time.</string>
+    <string name="result_msg_lily_loses">Lily looks sad meow.</string>
+    <string name="result_msg_lily_loses_2">Oh no, you beat me even though I am good at this.</string>
+    <string name="result_msg_lily_loses_3">Lily accepts defeat with big eyes.</string>
+    <string name="result_msg_coco_loses">Coco looks surprised meow.</string>
+    <string name="result_msg_coco_loses_2">Well, human, today you were a rival for me.</string>
+    <string name="result_msg_coco_loses_3">Coco lost, but he is already planning the rematch.</string>
+    <string name="result_msg_salem_loses">Salem stays silent... for now.</string>
+    <string name="result_msg_salem_loses_2">You beat me, human. Do not get used to it.</string>
+    <string name="result_msg_salem_loses_3">The night will remember this defeat.</string>
 
     <string name="match_result">MATCH RESULT</string>
     <string name="match_result_fallback">Match Result</string>
@@ -116,6 +151,30 @@
 
     <string name="start_game">Start game</string>
     <string name="cancel">Cancel</string>
+
+    <string name="super_intro_title">Luz presents the Super Cat challengers</string>
+    <string name="super_intro_body">This mode has nine mini boards. Win mini boards to claim the big board. Lily, Coco and Salem are ready to play.</string>
+    <string name="choose_opponent">Choose your challenger</string>
+    <string name="opponent_lily">Lily</string>
+    <string name="opponent_coco">Coco</string>
+    <string name="opponent_salem">Salem</string>
+    <string name="opponent_lily_desc">Easy level. Sweet, calm and perfect for learning.</string>
+    <string name="opponent_coco_desc">Intermediate level. Curious and a little more strategic.</string>
+    <string name="opponent_salem_desc">Hard level. Quiet, mysterious and very sharp.</string>
+    <string name="super_tutorial">Tutorial with Lily</string>
+    <string name="lily_tutorial_speech">I will show you. Play in one mini board; the cell you choose sends the next player to that matching mini board.</string>
+    <string name="super_tutorial_steps">Win a mini board by making three in a row. Claim three mini boards in a row to win Super Cat. If the board you send your rival to is already closed, they can play anywhere.</string>
+    <string name="super_status_any_board">• PLAY IN ANY OPEN MINI BOARD</string>
+    <string name="super_status_board">• PLAY IN MINI BOARD %1$d</string>
+    <string name="super_status_thinking">• %1$s IS THINKING</string>
+    <string name="super_greeting_lily">Hi human, I am Lily, your opponent now. I am the baby of the group, so good luck, because even though I am tiny, I am good at this.</string>
+    <string name="super_greeting_coco">Hi human, I see you already met Lily, but let us see if you are a rival for me. Meow.</string>
+    <string name="super_greeting_salem">My name is Salem and I will make this game hard for you hehe, I mean meooow.</string>
+    <string name="super_greeting_continue">Play</string>
+    <string name="home_family_greeting">Hi human, since I was feeling lonely here, I want to introduce my siblings: Lily, Coco and Salem. You can find them in Super Cat. I wish you lots of luck with them.</string>
+    <string name="super_family_greeting">Hi human, we are the super michis. Welcome to this new game mode.</string>
+    <string name="you_short">You</string>
+    <string name="vs">VS</string>
 
     <string name="notification_title">MichiXO misses you</string>
     <string name="notification_body">Luz is waiting for another match 🐾</string>

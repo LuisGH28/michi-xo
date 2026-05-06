@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -68,7 +69,10 @@ fun HomeScreen(vm: GameViewModel) {
 
     HomeScreenContent(
         onPlayClick = { showDifficultyDialog = true },
-        onSettingsClick = { vm.goToSettings() }
+        onSuperGatoClick = { vm.showSuperGatoIntro() },
+        onSettingsClick = { vm.goToSettings() },
+        showFamilyGreeting = uiState.showHomeFamilyGreeting,
+        onFamilyGreetingDismiss = { vm.dismissHomeFamilyGreeting() }
     )
 
     if (showDifficultyDialog) {
@@ -87,7 +91,10 @@ fun HomeScreen(vm: GameViewModel) {
 @Composable
 fun HomeScreenContent(
     onPlayClick: () -> Unit,
-    onSettingsClick: () -> Unit = {}
+    onSuperGatoClick: () -> Unit,
+    onSettingsClick: () -> Unit = {},
+    showFamilyGreeting: Boolean = false,
+    onFamilyGreetingDismiss: () -> Unit = {}
 ) {
     var startAnimation by remember { mutableStateOf(false) }
 
@@ -209,6 +216,7 @@ fun HomeScreenContent(
                     settingsAlpha = settingsAlpha,
                     settingsOffsetY = settingsOffsetY,
                     onPlayClick = onPlayClick,
+                    onSuperGatoClick = onSuperGatoClick,
                     onSettingsClick = onSettingsClick
                 )
             } else {
@@ -225,10 +233,131 @@ fun HomeScreenContent(
                     settingsAlpha = settingsAlpha,
                     settingsOffsetY = settingsOffsetY,
                     onPlayClick = onPlayClick,
+                    onSuperGatoClick = onSuperGatoClick,
                     onSettingsClick = onSettingsClick
                 )
             }
         }
+
+        if (showFamilyGreeting) {
+            HomeFamilyGreetingOverlay(
+                onDismiss = onFamilyGreetingDismiss,
+                modifier = Modifier.fillMaxSize()
+            )
+        }
+    }
+}
+
+@Composable
+private fun HomeFamilyGreetingOverlay(
+    onDismiss: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val configuration = LocalConfiguration.current
+    val isTablet = configuration.smallestScreenWidthDp >= 600
+
+    Box(
+        modifier = modifier
+            .background(androidx.compose.ui.graphics.Color.Black.copy(alpha = 0.18f))
+            .padding(if (isTablet) 28.dp else 16.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        Surface(
+            modifier = Modifier
+                .fillMaxWidth(if (isTablet) 0.82f else 1f)
+                .widthIn(max = 840.dp),
+            shape = RoundedCornerShape(26.dp),
+            color = MichiSoftPink,
+            shadowElevation = 8.dp
+        ) {
+            Column(
+                modifier = Modifier.padding(if (isTablet) 22.dp else 16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(if (isTablet) 20.dp else 12.dp)
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.super_luz),
+                        contentDescription = stringResource(R.string.cat_luz_short),
+                        modifier = Modifier
+                            .size(if (isTablet) 180.dp else 118.dp)
+                            .clip(RoundedCornerShape(24.dp)),
+                        contentScale = ContentScale.Crop
+                    )
+
+                    ComicSpeechBubble(
+                        text = stringResource(R.string.home_family_greeting),
+                        modifier = Modifier.weight(1f)
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(14.dp))
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceEvenly,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    GreetingMiniImage(
+                        imageRes = R.drawable.hi_lily,
+                        label = stringResource(R.string.opponent_lily)
+                    )
+                    GreetingMiniImage(
+                        imageRes = R.drawable.hi_coco,
+                        label = stringResource(R.string.opponent_coco)
+                    )
+                    GreetingMiniImage(
+                        imageRes = R.drawable.hi_salem,
+                        label = stringResource(R.string.opponent_salem)
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(14.dp))
+
+                Button(
+                    onClick = onDismiss,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(52.dp),
+                    shape = RoundedCornerShape(26.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MichiButton,
+                        contentColor = MichiSoftPink
+                    )
+                ) {
+                    Text(
+                        text = stringResource(R.string.super_greeting_continue),
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun GreetingMiniImage(
+    imageRes: Int,
+    label: String
+) {
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        Image(
+            painter = painterResource(id = imageRes),
+            contentDescription = label,
+            modifier = Modifier
+                .size(76.dp)
+                .clip(CircleShape),
+            contentScale = ContentScale.Crop
+        )
+        Spacer(modifier = Modifier.height(6.dp))
+        Text(
+            text = label,
+            color = MichiSoftBrown,
+            fontWeight = FontWeight.Bold,
+            fontSize = 13.sp
+        )
     }
 }
 
@@ -287,6 +416,7 @@ fun PortraitHomeContent(
     settingsAlpha: Float,
     settingsOffsetY: Float,
     onPlayClick: () -> Unit,
+    onSuperGatoClick: () -> Unit,
     onSettingsClick: () -> Unit
 ) {
     Column(
@@ -328,6 +458,7 @@ fun PortraitHomeContent(
             settingsOffsetY = settingsOffsetY,
             buttonWidthFraction = 1f,
             onPlayClick = onPlayClick,
+            onSuperGatoClick = onSuperGatoClick,
             onSettingsClick = onSettingsClick
         )
     }
@@ -347,6 +478,7 @@ fun TabletLandscapeHomeContent(
     settingsAlpha: Float,
     settingsOffsetY: Float,
     onPlayClick: () -> Unit,
+    onSuperGatoClick: () -> Unit,
     onSettingsClick: () -> Unit
 ) {
     Row(
@@ -397,6 +529,7 @@ fun TabletLandscapeHomeContent(
                 settingsOffsetY = settingsOffsetY,
                 buttonWidthFraction = 0.85f,
                 onPlayClick = onPlayClick,
+                onSuperGatoClick = onSuperGatoClick,
                 onSettingsClick = onSettingsClick
             )
         }
@@ -417,7 +550,7 @@ fun HomeHeroImage(
             contentAlignment = Alignment.Center
         ) {
             Image(
-                painter = painterResource(id = R.drawable.luz_hs),
+                painter = painterResource(id = R.drawable.super_brothers),
                 contentDescription = stringResource(R.string.luz_image),
                 modifier = Modifier
                     .fillMaxSize()
@@ -472,6 +605,7 @@ fun HomeButtons(
     settingsOffsetY: Float,
     buttonWidthFraction: Float,
     onPlayClick: () -> Unit,
+    onSuperGatoClick: () -> Unit,
     onSettingsClick: () -> Unit
 ) {
     Button(
@@ -510,6 +644,20 @@ fun HomeButtons(
             )
         }
     }
+
+    Spacer(modifier = Modifier.height(12.dp))
+
+    SecondaryButton(
+        modifier = Modifier
+            .fillMaxWidth(buttonWidthFraction)
+            .graphicsLayer {
+                alpha = settingsAlpha
+                translationY = settingsOffsetY
+            },
+        text = stringResource(R.string.super_gato),
+        icon = Icons.Filled.Pets,
+        onClick = onSuperGatoClick
+    )
 
     Spacer(modifier = Modifier.height(12.dp))
 
@@ -568,6 +716,7 @@ fun HomeScreenPreview() {
     MichiXOTheme {
         HomeScreenContent(
             onPlayClick = {},
+            onSuperGatoClick = {},
             onSettingsClick = {}
         )
     }
