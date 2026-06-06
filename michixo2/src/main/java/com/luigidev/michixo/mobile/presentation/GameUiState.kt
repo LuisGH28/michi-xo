@@ -1,6 +1,7 @@
 package com.luigidev.michixo.mobile.presentation
 
 import com.luigidev.michixo.model.Player
+import com.luigidev.michixo.mobile.presentation.theme.ThemeType
 import com.luigidev.michixo_core.domain.SuperGatoState
 import com.luigidev.michixo_core.model.Difficulty
 
@@ -34,9 +35,11 @@ data class GameUiState(
 
     val difficulty: Difficulty = Difficulty.EASY,
     val opponent: CatOpponent = CatOpponent.LILY,
+    val selectedThemeType: ThemeType = ThemeType.Luz,
     val showHomeFamilyGreeting: Boolean = false,
     val showSuperFamilyGreeting: Boolean = false,
     val showSuperGreeting: Boolean = false,
+    val hasSeenSuperMichiIntro: Boolean = false,
 
     val winner: Player? = null,
     val winLine: List<Int>? = null,

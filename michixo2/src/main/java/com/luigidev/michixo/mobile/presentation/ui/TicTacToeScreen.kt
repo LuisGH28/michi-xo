@@ -68,13 +68,15 @@ import com.luigidev.michixo.mobile.presentation.Screen
 import com.luigidev.michixo.mobile.presentation.theme.MichiBoard
 import com.luigidev.michixo.mobile.presentation.theme.MichiButton
 import com.luigidev.michixo.mobile.presentation.theme.MichiFont
-import com.luigidev.michixo.mobile.presentation.theme.MichiO
+import com.luigidev.michixo.mobile.presentation.theme.MichiGameTheme
 import com.luigidev.michixo.mobile.presentation.theme.MichiPink
 import com.luigidev.michixo.mobile.presentation.theme.MichiSoftBrown
 import com.luigidev.michixo.mobile.presentation.theme.MichiSoftPink
 import com.luigidev.michixo.mobile.presentation.theme.MichiTextPrimary
 import com.luigidev.michixo.mobile.presentation.theme.MichiWhite
 import com.luigidev.michixo.mobile.presentation.theme.MichiXOTheme
+import com.luigidev.michixo.mobile.presentation.theme.ThemeManager
+import com.luigidev.michixo.mobile.presentation.theme.ThemeType
 import com.luigidev.michixo.mobile.presentation.util.VibrationHelper
 import com.luigidev.michixo.model.Player
 
@@ -83,7 +85,8 @@ import com.luigidev.michixo.model.Player
 fun TicTacToeScreen(
     vm: GameViewModel,
     onExitApp: () -> Unit,
-    onNotificationsToggle: (Boolean) -> Unit
+    onNotificationsToggle: (Boolean) -> Unit,
+    onSuperMichiIntroDismissed: () -> Unit = {}
 ){
     val uiState by vm.uiState.collectAsState()
     val context = LocalContext.current
@@ -185,7 +188,10 @@ fun TicTacToeScreen(
                         }
                         vm.onSuperCellTap(boardIndex, cellIndex)
                     },
-                    onSuperGreetingDismiss = { vm.dismissSuperGreeting() },
+                    onSuperGreetingDismiss = {
+                        onSuperMichiIntroDismissed()
+                        vm.dismissSuperGreeting()
+                    },
                     onPauseClick = { showPauseDialog = true },
                     onSettingsClick = { showPauseSettingsDialog = true }
                 )
@@ -193,6 +199,7 @@ fun TicTacToeScreen(
                 if (showPauseDialog) {
                     PauseDialog(
                         isVolumeEnabled = uiState.musicEnabled,
+                        gameTheme = ThemeManager.themeFor(uiState.selectedThemeType),
                         opponent = if (uiState.gameMode == GameMode.SUPER_GATO) {
                             uiState.opponent
                         } else {
@@ -221,6 +228,7 @@ fun TicTacToeScreen(
                     PauseSettingsDialog(
                         musicEnabled = uiState.musicEnabled,
                         vibrationEnabled = uiState.vibrationEnabled,
+                        gameTheme = ThemeManager.themeFor(uiState.selectedThemeType),
                         onDismiss = { showPauseSettingsDialog = false },
                         onMusicToggle = { vm.setMusicEnabled(!uiState.musicEnabled) },
                         onVibrationToggle = { vm.setVibrationEnabled(!uiState.vibrationEnabled) }
@@ -229,6 +237,7 @@ fun TicTacToeScreen(
 
                 if (showInfoDialog) {
                     PauseInfoDialog(
+                        gameTheme = ThemeManager.themeFor(uiState.selectedThemeType),
                         opponent = if (uiState.gameMode == GameMode.SUPER_GATO) {
                             uiState.opponent
                         } else {
@@ -258,6 +267,10 @@ fun TicTacToeScreen(
                 onMusicToggle = { vm.setMusicEnabled(it) },
                 onVibrationToggle = { vm.setVibrationEnabled(it) },
                 onNotificationsToggle = onNotificationsToggle,
+                onMeetSuperMichisClick = {
+                    vm.showSuperGatoIntro()
+                    vm.showSuperFamilyGreeting()
+                },
                 onBackClick = { vm.backToHome() }
             )
         }
@@ -304,6 +317,7 @@ fun GameScreen(
     onSettingsClick: () -> Unit = {}
 ) {
     val configuration = LocalConfiguration.current
+    val gameTheme = ThemeManager.themeFor(uiState.selectedThemeType)
 
     val isLandscape =
         configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
@@ -311,13 +325,16 @@ fun GameScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(MichiSoftPink)
+            .background(gameTheme.backgroundColor)
             .navigationBarsPadding()
             .padding(horizontal = 22.dp, vertical = 16.dp)
     ) {
+        ThemeBackgroundLayer(theme = gameTheme)
+
         if (uiState.gameMode == GameMode.SUPER_GATO) {
             SuperGatoGameContent(
                 uiState = uiState,
+                gameTheme = gameTheme,
                 isLandscape = isLandscape,
                 onCellTap = onSuperCellTap,
                 onGreetingDismiss = onSuperGreetingDismiss,
@@ -327,6 +344,7 @@ fun GameScreen(
         } else if (isLandscape) {
             LandscapeGameContent(
                 uiState = uiState,
+                gameTheme = gameTheme,
                 onCellTap = onCellTap,
                 onPauseClick = onPauseClick,
                 onSettingsClick = onSettingsClick
@@ -334,6 +352,7 @@ fun GameScreen(
         } else {
             PortraitGameContent(
                 uiState = uiState,
+                gameTheme = gameTheme,
                 onCellTap = onCellTap,
                 onPauseClick = onPauseClick,
                 onSettingsClick = onSettingsClick
@@ -345,6 +364,7 @@ fun GameScreen(
 @Composable
 fun PortraitGameContent(
     uiState: GameUiState,
+    gameTheme: MichiGameTheme,
     onCellTap: (Int) -> Unit,
     onPauseClick: () -> Unit,
     onSettingsClick: () -> Unit
@@ -357,7 +377,7 @@ fun PortraitGameContent(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
-        GameHeader()
+        GameHeader(gameTheme)
 
         Spacer(modifier = Modifier.height(if (isTablet) 26.dp else 20.dp))
 
@@ -367,17 +387,19 @@ fun PortraitGameContent(
 
         GameBoard(
             board = uiState.board,
+            gameTheme = gameTheme,
             onCellTap = onCellTap,
             modifier = Modifier.fillMaxWidth(if (isTablet) 0.62f else 0.9f)
         )
 
         Spacer(modifier = Modifier.height(if (isTablet) 24.dp else 18.dp))
 
-        GameStatus(uiState = uiState)
+        GameStatus(uiState = uiState, gameTheme = gameTheme)
 
         Spacer(modifier = Modifier.height(if (isTablet) 34.dp else 28.dp))
 
         GameActions(
+            gameTheme = gameTheme,
             onPauseClick = onPauseClick,
             onSettingsClick = onSettingsClick
         )
@@ -387,6 +409,7 @@ fun PortraitGameContent(
 @Composable
 fun LandscapeGameContent(
     uiState: GameUiState,
+    gameTheme: MichiGameTheme,
     onCellTap: (Int) -> Unit,
     onPauseClick: () -> Unit,
     onSettingsClick: () -> Unit
@@ -406,7 +429,7 @@ fun LandscapeGameContent(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            GameHeader()
+            GameHeader(gameTheme)
 
             Spacer(modifier = Modifier.height(20.dp))
 
@@ -414,11 +437,12 @@ fun LandscapeGameContent(
 
             Spacer(modifier = Modifier.height(22.dp))
 
-            GameStatus(uiState = uiState)
+            GameStatus(uiState = uiState, gameTheme = gameTheme)
 
             Spacer(modifier = Modifier.height(22.dp))
 
             GameActions(
+                gameTheme = gameTheme,
                 onPauseClick = onPauseClick,
                 onSettingsClick = onSettingsClick
             )
@@ -432,6 +456,7 @@ fun LandscapeGameContent(
         ) {
             GameBoard(
                 board = uiState.board,
+                gameTheme = gameTheme,
                 onCellTap = onCellTap,
                 modifier = Modifier.fillMaxWidth(if (isTablet) 0.72f else 0.82f)
             )
@@ -440,7 +465,8 @@ fun LandscapeGameContent(
 }
 
 @Composable
-fun GameHeader() {
+fun GameHeader(gameTheme: MichiGameTheme? = null) {
+    val activeTheme = gameTheme ?: ThemeManager.themeFor(ThemeType.Luz)
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
@@ -448,14 +474,14 @@ fun GameHeader() {
         Surface(
             modifier = Modifier.size(30.dp),
             shape = CircleShape,
-            color = MichiPink
+            color = activeTheme.secondaryColor
         ) {
             Box(contentAlignment = Alignment.Center) {
                 Icon(
                     imageVector = Icons.Filled.Pets,
                     contentDescription = stringResource(R.string.cd_pets),
                     modifier = Modifier.size(16.dp),
-                    tint = MichiSoftBrown
+                    tint = activeTheme.primaryColor
                 )
             }
         }
@@ -468,7 +494,7 @@ fun GameHeader() {
                 text = stringResource(R.string.app_name),
                 fontFamily = MichiFont,
                 fontSize = 22.sp,
-                color = MichiButton
+                color = activeTheme.primaryColor
             )
         }
     }
@@ -537,7 +563,8 @@ fun LuzHeader(
 
 @Composable
 fun GameStatus(
-    uiState: GameUiState
+    uiState: GameUiState,
+    gameTheme: MichiGameTheme
 ) {
     Text(
         text = when {
@@ -547,7 +574,7 @@ fun GameStatus(
             uiState.isAiThinking -> stringResource(R.string.status_luz_thinking)
             else -> stringResource(R.string.status_your_turn)
         },
-        color = MichiButton,
+        color = gameTheme.primaryColor,
         fontSize = 14.sp,
         fontWeight = FontWeight.SemiBold,
         letterSpacing = 1.5.sp
@@ -556,6 +583,7 @@ fun GameStatus(
 
 @Composable
 fun GameActions(
+    gameTheme: MichiGameTheme? = null,
     onPauseClick: () -> Unit,
     onSettingsClick: () -> Unit
 ) {
@@ -566,12 +594,14 @@ fun GameActions(
         ActionCircleButton(
             label = stringResource(R.string.pause),
             icon = Icons.Filled.Pause,
+            gameTheme = gameTheme,
             onClick = onPauseClick
         )
 
         ActionCircleButton(
             label = stringResource(R.string.settings_title),
             icon = Icons.Filled.Settings,
+            gameTheme = gameTheme,
             onClick = onSettingsClick
         )
     }
@@ -580,6 +610,7 @@ fun GameActions(
 @Composable
 fun GameCell(
     value: Player,
+    gameTheme: MichiGameTheme,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -588,7 +619,7 @@ fun GameCell(
             .aspectRatio(1f)
             .clickable { onClick() },
         shape = RoundedCornerShape(16.dp),
-        color = MichiWhite
+        color = gameTheme.secondaryColor
     ) {
         BoxWithConstraints(
             modifier = Modifier.fillMaxSize(),
@@ -596,23 +627,33 @@ fun GameCell(
         ) {
             val cellWidth = maxWidth
 
-            val iconSize = (cellWidth * 0.50f)
-                .coerceIn(42.dp, 92.dp)
+            val iconSize = (cellWidth * 0.75f)
+                .coerceIn(48.dp, 112.dp)
 
             when (value) {
                 Player.X -> Icon(
-                    painter = painterResource(id = R.drawable.ic_yarn),
+                    painter = painterResource(id = gameTheme.xIcon),
                     contentDescription = stringResource(R.string.cd_player_x),
                     modifier = Modifier.size(iconSize),
-                    tint = Color.Unspecified
+                    tint = gameTheme.xColor
                 )
 
-                Player.O -> Icon(
-                    imageVector = Icons.Filled.Pets,
-                    contentDescription = stringResource(R.string.cd_player_o),
-                    modifier = Modifier.size(iconSize),
-                    tint = MichiO
-                )
+                Player.O -> {
+                    if (gameTheme.useLibraryPawForO) {
+                        LuzPawBadge(
+                            contentDescription = stringResource(R.string.cd_player_o),
+                            modifier = Modifier.size(iconSize),
+                            pawColor = gameTheme.oColor
+                        )
+                    } else {
+                        Icon(
+                            painter = painterResource(id = gameTheme.oIcon),
+                            contentDescription = stringResource(R.string.cd_player_o),
+                            modifier = Modifier.size(iconSize),
+                            tint = gameTheme.oColor
+                        )
+                    }
+                }
 
                 Player.NONE -> {}
             }
@@ -623,13 +664,14 @@ fun GameCell(
 @Composable
 fun GameBoard(
     board: List<Player>,
+    gameTheme: MichiGameTheme,
     onCellTap: (Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Surface(
         modifier = modifier.aspectRatio(1f),
         shape = RoundedCornerShape(30.dp),
-        color = MichiBoard,
+        color = gameTheme.boardColor,
         tonalElevation = 2.dp
     ) {
         Column(
@@ -648,6 +690,7 @@ fun GameBoard(
 
                         GameCell(
                             value = board[index],
+                            gameTheme = gameTheme,
                             onClick = { onCellTap(index) },
                             modifier = Modifier.weight(1f)
                         )
@@ -659,18 +702,42 @@ fun GameBoard(
 }
 
 @Composable
+private fun LuzPawBadge(
+    contentDescription: String,
+    modifier: Modifier = Modifier,
+    pawColor: Color
+) {
+    Box(
+        modifier = modifier
+            .clip(CircleShape)
+            .background(MichiWhite.copy(alpha = 0.86f)),
+        contentAlignment = Alignment.Center
+    ) {
+        Icon(
+            imageVector = Icons.Filled.Pets,
+            contentDescription = contentDescription,
+            modifier = Modifier.fillMaxSize(0.72f),
+            tint = pawColor
+        )
+    }
+}
+
+@Composable
 fun ActionCircleButton(
     label: String,
     icon: ImageVector,
+    gameTheme: MichiGameTheme? = null,
     onClick: () -> Unit
 ) {
+    val activeTheme = gameTheme ?: ThemeManager.themeFor(ThemeType.Luz)
+    val themedMode = activeTheme.themeType != ThemeType.Luz
     Column(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Surface(
             modifier = Modifier.size(52.dp),
             shape = CircleShape,
-            color = MichiWhite,
+            color = if (themedMode) activeTheme.boardColor else MichiWhite,
             shadowElevation = 6.dp,
             onClick = onClick
         ) {
@@ -679,7 +746,7 @@ fun ActionCircleButton(
                     imageVector = icon,
                     contentDescription = label,
                     modifier = Modifier.size(22.dp),
-                    tint = MichiSoftBrown
+                    tint = if (themedMode) activeTheme.pauseAccentColor else MichiSoftBrown
                 )
             }
         }
@@ -689,7 +756,7 @@ fun ActionCircleButton(
         Text(
             text = label,
             fontSize = 11.sp,
-            color = MichiTextPrimary,
+            color = if (themedMode) activeTheme.pauseTextColor.copy(alpha = 0.82f) else MichiTextPrimary,
             fontWeight = FontWeight.Medium
         )
     }

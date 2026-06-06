@@ -68,6 +68,8 @@ import com.luigidev.michixo.mobile.presentation.theme.MichiSoftBrown
 import com.luigidev.michixo.mobile.presentation.theme.MichiSoftPink
 import com.luigidev.michixo.mobile.presentation.theme.MichiTextPrimary
 import com.luigidev.michixo.mobile.presentation.theme.MichiWhite
+import com.luigidev.michixo.mobile.presentation.theme.ThemeManager
+import com.luigidev.michixo.mobile.presentation.theme.ThemeType
 import com.luigidev.michixo.model.Player
 import com.luigidev.michixo_core.domain.SuperGatoState
 
@@ -365,7 +367,8 @@ private fun OpponentCard(
     selected: Boolean,
     onClick: () -> Unit
 ) {
-    val borderColor = if (selected) MichiButton else MichiPink
+    val opponentTheme = ThemeManager.themeFor(opponent.themeType())
+    val borderColor = if (selected) opponentTheme.primaryColor else opponentTheme.secondaryColor
 
     Surface(
         modifier = Modifier
@@ -373,7 +376,7 @@ private fun OpponentCard(
             .border(2.dp, borderColor, RoundedCornerShape(20.dp))
             .clickable { onClick() },
         shape = RoundedCornerShape(20.dp),
-        color = if (selected) MichiDeepPink else MichiWhite
+        color = if (selected) opponentTheme.boardColor else MichiWhite
     ) {
         Row(
             modifier = Modifier.padding(12.dp),
@@ -392,7 +395,7 @@ private fun OpponentCard(
                     text = opponent.displayName(),
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold,
-                    color = MichiSoftBrown
+                    color = opponentTheme.primaryColor
                 )
                 Text(
                     text = opponent.description(),
@@ -405,7 +408,7 @@ private fun OpponentCard(
                 onClick = onClick,
                 shape = RoundedCornerShape(18.dp),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = MichiButton,
+                    containerColor = opponentTheme.primaryColor,
                     contentColor = MichiWhite
                 )
             ) {
@@ -565,6 +568,7 @@ private fun TutorialSuperBoard(pointerScale: Float) {
         val boardSize = maxWidth
         SuperGatoBoard(
             uiState = GameUiState(
+                selectedThemeType = ThemeType.Lily,
                 superGato = SuperGatoState(
                     cells = List(81) { index ->
                         when (index) {
@@ -576,6 +580,7 @@ private fun TutorialSuperBoard(pointerScale: Float) {
                     activeBoard = 4
                 )
             ),
+            gameTheme = ThemeManager.themeFor(ThemeType.Lily),
             onCellTap = { _, _ -> },
             modifier = Modifier.fillMaxSize()
         )
@@ -600,6 +605,14 @@ private fun TutorialSuperBoard(pointerScale: Float) {
                 )
             }
         }
+    }
+}
+
+private fun CatOpponent.themeType(): ThemeType {
+    return when (this) {
+        CatOpponent.LILY -> ThemeType.Lily
+        CatOpponent.COCO -> ThemeType.Coco
+        CatOpponent.SALEM -> ThemeType.Salem
     }
 }
 

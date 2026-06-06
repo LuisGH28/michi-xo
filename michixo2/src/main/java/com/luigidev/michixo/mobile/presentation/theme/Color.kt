@@ -1,27 +1,43 @@
 package com.luigidev.michixo.mobile.presentation.theme
 
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.colorResource
+import com.luigidev.michixo.mobile.R
 
 // Backgrounds
-val MichiSoftPink = Color(0xFFFFF0F6)
-val MichiDeepPink = Color(0xFFFFE0EA)
-val MichiBoard = Color(0xFFFFEFF4)
+val MichiSoftPink: Color
+    @Composable get() = colorResource(R.color.michi_soft_pink)
+val MichiDeepPink: Color
+    @Composable get() = colorResource(R.color.michi_deep_pink)
+val MichiBoard: Color
+    @Composable get() = colorResource(R.color.michi_board_pink)
 
 // Primary colors
-val MichiPink = Color(0xFFFFC1D6)
-val MichiButton = Color(0xFFFF80AB)
-val MichiAccent = Color(0xFFB76E79)
+val MichiPink: Color
+    @Composable get() = colorResource(R.color.michi_pink)
+val MichiButton: Color
+    @Composable get() = colorResource(R.color.michi_button_pink)
+val MichiAccent: Color
+    @Composable get() = colorResource(R.color.michi_accent)
 
 // Text
-val MichiTextPrimary = Color(0xFF4A4A4A)
-val MichiSoftBrown = Color(0xFF6D4C41)
-val MichiBrown = Color(0xFF8D6E63)
+val MichiTextPrimary: Color
+    @Composable get() = colorResource(R.color.michi_text_primary)
+val MichiSoftBrown: Color
+    @Composable get() = colorResource(R.color.michi_soft_brown)
+val MichiBrown: Color
+    @Composable get() = colorResource(R.color.michi_brown)
 
 // Game
-val MichiO = Color(0xFFF3A6C1)
+val MichiO: Color
+    @Composable get() = colorResource(R.color.michi_o_pink)
 
 // Base
-val MichiWhite = Color(0xFFFFFFFF)
-val MichiOverlay = Color(0xBDBDBD)
+val MichiWhite: Color
+    @Composable get() = colorResource(R.color.white)
+val MichiOverlay: Color
+    @Composable get() = colorResource(R.color.michi_overlay)
 
-val MichiSwitchOff = Color(0xFFD8C7CE)
+val MichiSwitchOff: Color
+    @Composable get() = colorResource(R.color.michi_switch_off)

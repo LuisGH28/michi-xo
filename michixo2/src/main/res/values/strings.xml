@@ -173,6 +173,9 @@
     <string name="super_greeting_continue">Play</string>
     <string name="home_family_greeting">Hi human, since I was feeling lonely here, I want to introduce my siblings: Lily, Coco and Salem. You can find them in Super Cat. I wish you lots of luck with them.</string>
     <string name="super_family_greeting">Hi human, we are the super michis. Welcome to this new game mode.</string>
+    <string name="meet_super_michis">Meet the Super Michis</string>
+    <string name="meet_super_michis_subtitle">Replay Luz welcome to Lily, Coco and Salem.</string>
+    <string name="replay_intro">Replay</string>
     <string name="you_short">You</string>
     <string name="vs">VS</string>
 

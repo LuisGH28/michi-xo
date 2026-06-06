@@ -25,6 +25,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.MusicNote
 import androidx.compose.material.icons.filled.Notifications
+import androidx.compose.material.icons.filled.Pets
 import androidx.compose.material.icons.filled.Vibration
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -72,6 +73,7 @@ fun SettingsScreen(
     onMusicToggle: (Boolean) -> Unit,
     onVibrationToggle: (Boolean) -> Unit,
     onNotificationsToggle: (Boolean) -> Unit,
+    onMeetSuperMichisClick: () -> Unit,
     onBackClick: () -> Unit
 ) {
     val configuration = LocalConfiguration.current
@@ -97,6 +99,7 @@ fun SettingsScreen(
                 onMusicToggle = onMusicToggle,
                 onVibrationToggle = onVibrationToggle,
                 onNotificationsToggle = onNotificationsToggle,
+                onMeetSuperMichisClick = onMeetSuperMichisClick,
                 onBackClick = onBackClick
             )
 
@@ -109,6 +112,7 @@ fun SettingsScreen(
                 onMusicToggle = onMusicToggle,
                 onVibrationToggle = onVibrationToggle,
                 onNotificationsToggle = onNotificationsToggle,
+                onMeetSuperMichisClick = onMeetSuperMichisClick,
                 onBackClick = onBackClick
             )
         }
@@ -123,6 +127,7 @@ fun PortraitSettingsContent(
     onMusicToggle: (Boolean) -> Unit,
     onVibrationToggle: (Boolean) -> Unit,
     onNotificationsToggle: (Boolean) -> Unit,
+    onMeetSuperMichisClick: () -> Unit,
     onBackClick: () -> Unit
 ) {
 
@@ -152,6 +157,7 @@ fun PortraitSettingsContent(
                 onMusicToggle = onMusicToggle,
                 onVibrationToggle = onVibrationToggle,
                 onNotificationsToggle = onNotificationsToggle,
+                onMeetSuperMichisClick = onMeetSuperMichisClick,
             )
 
             Spacer(modifier = Modifier.height(20.dp))
@@ -171,6 +177,7 @@ fun TabletLandscapeSettingsContent(
     onMusicToggle: (Boolean) -> Unit,
     onVibrationToggle: (Boolean) -> Unit,
     onNotificationsToggle: (Boolean) -> Unit,
+    onMeetSuperMichisClick: () -> Unit,
     onBackClick: () -> Unit
 ) {
 
@@ -212,6 +219,7 @@ fun TabletLandscapeSettingsContent(
                     onMusicToggle = onMusicToggle,
                     onVibrationToggle = onVibrationToggle,
                     onNotificationsToggle = onNotificationsToggle,
+                    onMeetSuperMichisClick = onMeetSuperMichisClick,
                 )
 
                 Spacer(modifier = Modifier.height(12.dp))
@@ -291,7 +299,8 @@ vibrationEnabled: Boolean,
 notificationsEnabled: Boolean,
 onMusicToggle: (Boolean) -> Unit,
 onVibrationToggle: (Boolean) -> Unit,
-onNotificationsToggle: (Boolean) -> Unit
+onNotificationsToggle: (Boolean) -> Unit,
+onMeetSuperMichisClick: () -> Unit
 ) {
 
     SettingsOptionCard(
@@ -343,6 +352,76 @@ onNotificationsToggle: (Boolean) -> Unit
     Spacer(modifier = Modifier.height(14.dp))
 
     LanguageCard()
+
+    Spacer(modifier = Modifier.height(14.dp))
+
+    MeetSuperMichisCard(onClick = onMeetSuperMichisClick)
+}
+
+@Composable
+fun MeetSuperMichisCard(
+    onClick: () -> Unit
+) {
+    Surface(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(24.dp),
+        color = MichiDeepPink,
+        shadowElevation = 3.dp
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 18.dp, vertical = 16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Surface(
+                modifier = Modifier.size(44.dp),
+                shape = CircleShape,
+                color = MichiPink
+            ) {
+                Box(contentAlignment = Alignment.Center) {
+                    Icon(
+                        imageVector = Icons.Filled.Pets,
+                        contentDescription = stringResource(R.string.meet_super_michis),
+                        tint = MichiButton
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.width(14.dp))
+
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = stringResource(R.string.meet_super_michis),
+                    fontSize = 18.sp,
+                    color = MichiSoftBrown,
+                    fontWeight = FontWeight.Bold
+                )
+
+                Spacer(modifier = Modifier.height(4.dp))
+
+                Text(
+                    text = stringResource(R.string.meet_super_michis_subtitle),
+                    fontSize = 13.sp,
+                    color = MichiTextPrimary
+                )
+            }
+
+            Button(
+                onClick = onClick,
+                shape = RoundedCornerShape(20.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MichiButton,
+                    contentColor = MichiWhite
+                )
+            ) {
+                Text(
+                    text = stringResource(R.string.replay_intro),
+                    fontWeight = FontWeight.SemiBold
+                )
+            }
+        }
+    }
 }
 
 @Composable
@@ -507,6 +586,7 @@ fun SettingsScreenPreview() {
             onMusicToggle = { musicEnabled = it },
             onVibrationToggle = { vibrationEnabled = it },
             onNotificationsToggle = { notificationsEnabled = it },
+            onMeetSuperMichisClick = {},
             onBackClick = {}
         )
     }

@@ -58,12 +58,13 @@ import com.luigidev.michixo.mobile.presentation.theme.MichiBoard
 import com.luigidev.michixo.mobile.presentation.theme.MichiButton
 import com.luigidev.michixo.mobile.presentation.theme.MichiDeepPink
 import com.luigidev.michixo.mobile.presentation.theme.MichiFont
-import com.luigidev.michixo.mobile.presentation.theme.MichiO
+import com.luigidev.michixo.mobile.presentation.theme.MichiGameTheme
 import com.luigidev.michixo.mobile.presentation.theme.MichiPink
 import com.luigidev.michixo.mobile.presentation.theme.MichiSoftBrown
 import com.luigidev.michixo.mobile.presentation.theme.MichiSoftPink
 import com.luigidev.michixo.mobile.presentation.theme.MichiWhite
 import com.luigidev.michixo.mobile.presentation.theme.MichiXOTheme
+import com.luigidev.michixo.mobile.presentation.theme.ThemeManager
 import com.luigidev.michixo.model.Player
 
 @Composable
@@ -77,11 +78,12 @@ fun ResultScreen(
     val configuration = LocalConfiguration.current
     val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
     val isTablet = configuration.smallestScreenWidthDp >= 600
+    val gameTheme = ThemeManager.themeFor(uiState.selectedThemeType)
 
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(MichiSoftPink)
+            .background(gameTheme.backgroundColor)
             .navigationBarsPadding()
             .padding(horizontal = 24.dp, vertical = 20.dp)
     ) {
@@ -122,6 +124,7 @@ fun ResultScreen(
                     ResultBoard(
                         board = uiState.board,
                         winLine = uiState.winLine,
+                        gameTheme = gameTheme,
                         modifier = Modifier.fillMaxWidth()
                     )
 
@@ -463,12 +466,13 @@ fun ResultButtons(
 fun ResultBoard(
     board: List<Player>,
     winLine: List<Int>?,
+    gameTheme: MichiGameTheme,
     modifier: Modifier = Modifier
 ) {
     Surface(
         modifier = modifier.aspectRatio(1f),
         shape = RoundedCornerShape(24.dp),
-        color = MichiBoard
+        color = gameTheme.boardColor
     ) {
         Column(
             modifier = Modifier
@@ -487,6 +491,7 @@ fun ResultBoard(
                         ResultBoardCell(
                             value = board[index],
                             highlighted = winLine?.contains(index) == true,
+                            gameTheme = gameTheme,
                             modifier = Modifier.weight(1f)
                         )
                     }
@@ -500,12 +505,13 @@ fun ResultBoard(
 fun ResultBoardCell(
     value: Player,
     highlighted: Boolean,
+    gameTheme: MichiGameTheme,
     modifier: Modifier = Modifier
 ) {
     Surface(
         modifier = modifier.aspectRatio(1f),
         shape = RoundedCornerShape(14.dp),
-        color = if (highlighted) MichiPink else MichiWhite
+        color = if (highlighted) gameTheme.victoryColor else gameTheme.secondaryColor
     ) {
         BoxWithConstraints(
             modifier = Modifier.fillMaxSize(),
@@ -513,27 +519,58 @@ fun ResultBoardCell(
         ) {
             val cellWidth = maxWidth
 
-            val iconSize = (cellWidth * 0.50f)
-                .coerceIn(28.dp, 54.dp)
+            val iconSize = (cellWidth * 0.75f)
+                .coerceIn(36.dp, 76.dp)
 
             when (value) {
                 Player.X -> Icon(
-                    painter = painterResource(id = R.drawable.ic_yarn),
+                    painter = painterResource(id = gameTheme.xIcon),
                     contentDescription = stringResource(R.string.cd_player_x),
                     modifier = Modifier.size(iconSize),
-                    tint = Color.Unspecified
+                    tint = gameTheme.xColor
                 )
 
-                Player.O -> Icon(
-                    imageVector = Icons.Filled.Pets,
-                    contentDescription = stringResource(R.string.cd_player_o),
-                    modifier = Modifier.size(iconSize),
-                    tint = MichiO
-                )
+                Player.O -> {
+                    if (gameTheme.useLibraryPawForO) {
+                        LuzPawBadge(
+                            contentDescription = stringResource(R.string.cd_player_o),
+                            modifier = Modifier.size(iconSize),
+                            pawColor = gameTheme.oColor
+                        )
+                    } else {
+                        Icon(
+                            painter = painterResource(id = gameTheme.oIcon),
+                            contentDescription = stringResource(R.string.cd_player_o),
+                            modifier = Modifier.size(iconSize),
+                            tint = gameTheme.oColor
+                        )
+                    }
+                }
 
                 Player.NONE -> {}
             }
         }
+    }
+}
+
+@Composable
+private fun LuzPawBadge(
+    contentDescription: String,
+    modifier: Modifier = Modifier,
+    pawColor: Color
+) {
+    Box(
+        modifier = modifier
+            .clip(CircleShape)
+            .background(MichiWhite.copy(alpha = 0.86f)),
+        contentAlignment = Alignment.Center
+    ) {
+        Icon(
+            imageVector = Icons.Filled.Pets,
+            contentDescription = contentDescription,
+            modifier = Modifier.fillMaxSize(0.72f),
+            tint = pawColor
+        )
     }
 }
 

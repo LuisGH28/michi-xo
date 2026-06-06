@@ -9,7 +9,10 @@ import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -22,8 +25,12 @@ import com.luigidev.michixo.mobile.notifications.NotificationScheduler
 import com.luigidev.michixo.mobile.presentation.GameViewModel
 import com.luigidev.michixo.mobile.presentation.Screen
 import com.luigidev.michixo.mobile.presentation.theme.MichiXOTheme
+import com.luigidev.michixo.mobile.presentation.theme.ThemeManager
 
 class MainActivity : AppCompatActivity() {
+    private companion object {
+        const val KEY_HAS_SEEN_SUPER_MICHI_INTRO = "has_seen_super_michi_intro"
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,6 +42,7 @@ class MainActivity : AppCompatActivity() {
                 val vm: GameViewModel = viewModel()
                 val context = LocalContext.current
                 val uiState = vm.uiState.collectAsStateWithLifecycle().value
+                var themeRestored by remember { mutableStateOf(false) }
 
                 val behaviorStore = remember {
                     UserBehaviorStore(context)
@@ -68,6 +76,12 @@ class MainActivity : AppCompatActivity() {
                 }
 
                 LaunchedEffect(Unit) {
+                    vm.setThemeType(ThemeManager.restoreThemeType(context))
+                    vm.setHasSeenSuperMichiIntro(
+                        introPreferences.getBoolean(KEY_HAS_SEEN_SUPER_MICHI_INTRO, false)
+                    )
+                    themeRestored = true
+
                     if (!introPreferences.getBoolean("home_family_greeting_seen", false)) {
                         introPreferences.edit()
                             .putBoolean("home_family_greeting_seen", true)
@@ -110,6 +124,12 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
 
+                LaunchedEffect(themeRestored, uiState.selectedThemeType) {
+                    if (themeRestored) {
+                        ThemeManager.persistThemeType(context, uiState.selectedThemeType)
+                    }
+                }
+
                 LaunchedEffect(uiState.musicEnabled, uiState.screen) {
                     if (uiState.musicEnabled && uiState.screen == Screen.GAME) {
                         MusicManager.start(context)
@@ -132,6 +152,12 @@ class MainActivity : AppCompatActivity() {
                 TicTacToeScreen(
                     vm = vm,
                     onExitApp = { finish() },
+                    onSuperMichiIntroDismissed = {
+                        introPreferences.edit()
+                            .putBoolean(KEY_HAS_SEEN_SUPER_MICHI_INTRO, true)
+                            .apply()
+                        vm.setHasSeenSuperMichiIntro(true)
+                    },
                     onNotificationsToggle = { enabled ->
                         if (enabled) {
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {

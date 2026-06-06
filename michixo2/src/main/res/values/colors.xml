@@ -8,4 +8,40 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="michi_soft_pink">#FFF0F6</color>
+    <color name="michi_deep_pink">#FFE0EA</color>
+    <color name="michi_board_pink">#FFEFF4</color>
+    <color name="michi_pink">#FFC1D6</color>
+    <color name="michi_button_pink">#FF80AB</color>
+    <color name="michi_accent">#B76E79</color>
+    <color name="michi_text_primary">#4A4A4A</color>
+    <color name="michi_soft_brown">#6D4C41</color>
+    <color name="michi_brown">#8D6E63</color>
+    <color name="michi_o_pink">#F3A6C1</color>
+    <color name="michi_overlay">#BDBDBD</color>
+    <color name="michi_switch_off">#D8C7CE</color>
+
+    <color name="michi_lily_cream">#F3E7D2</color>
+    <color name="michi_lily_board">#FFF7EC</color>
+    <color name="michi_lily_accent">#93B5DD</color>
+    <color name="michi_coco_sky">#EAFBFF</color>
+    <color name="michi_coco_board">#F7FEFF</color>
+    <color name="michi_coco_accent">#B7D6DE</color>
+    <color name="michi_salem_night">#17191F</color>
+    <color name="michi_salem_board">#242832</color>
+    <color name="michi_salem_cell">#323846</color>
+    <color name="michi_salem_moon">#F2E8CF</color>
+    <color name="michi_salem_silver">#C8D0DA</color>
+    <color name="michi_salem_soft_purple">#8E7CCF</color>
+    <color name="salem_galaxy_background">#151923</color>
+    <color name="salem_galaxy_card">#242A36</color>
+    <color name="salem_moonlight">#F3EBD7</color>
+    <color name="salem_star">#D9E0EA</color>
+
+    <color name="coco_sky_background">#DFF8FF</color>
+    <color name="coco_cloud">#FAFEFF</color>
+    <color name="coco_sun_soft">#FFE6A7</color>
+
+    <color name="lily_garden_background">#FFF4E4</color>
+    <color name="lily_garden_card">#FFF9F0</color>
+    <color name="lily_flower_accent">#D7B8FF</color>
 </resources>

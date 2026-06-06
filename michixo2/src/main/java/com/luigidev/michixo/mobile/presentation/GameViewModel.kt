@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.luigidev.michixo.mobile.R
 import com.luigidev.michixo.mobile.model.GameResult
+import com.luigidev.michixo.mobile.presentation.theme.ThemeType
 import com.luigidev.michixo.domain.AiPlayer
 import com.luigidev.michixo.domain.GameEngine
 import com.luigidev.michixo.domain.Rules
@@ -37,6 +38,17 @@ class GameViewModel(
         }
     }
 
+    fun setThemeType(themeType: ThemeType) {
+        _uiState.update { state ->
+            val opponent = opponentForTheme(themeType) ?: state.opponent
+            state.copy(
+                selectedThemeType = themeType,
+                opponent = opponent,
+                difficulty = opponent.difficulty
+            )
+        }
+    }
+
     fun startGame() {
         val state = _uiState.value
 
@@ -48,9 +60,11 @@ class GameViewModel(
             currentTurn = Player.X,
             difficulty = state.difficulty,
             opponent = state.opponent,
+            selectedThemeType = ThemeType.Luz,
             musicEnabled = state.musicEnabled,
             vibrationEnabled = state.vibrationEnabled,
             notificationsEnabled = state.notificationsEnabled,
+            hasSeenSuperMichiIntro = state.hasSeenSuperMichiIntro,
             resultTitle = "",
             resultMessage = "",
             resultImageRes = null,
@@ -63,7 +77,8 @@ class GameViewModel(
             state.copy(
                 screen = Screen.SUPER_INTRO,
                 gameMode = GameMode.SUPER_GATO,
-                opponent = opponentForDifficulty(state.difficulty)
+                opponent = opponentForDifficulty(state.difficulty),
+                selectedThemeType = themeForOpponent(opponentForDifficulty(state.difficulty))
             )
         }
     }
@@ -78,7 +93,8 @@ class GameViewModel(
                 currentTurn = Player.X,
                 difficulty = opponent.difficulty,
                 opponent = opponent,
-                showSuperGreeting = true,
+                selectedThemeType = themeForOpponent(opponent),
+                showSuperGreeting = !state.hasSeenSuperMichiIntro,
                 winner = null,
                 winLine = null,
                 isDraw = false,
@@ -127,6 +143,15 @@ class GameViewModel(
         }
     }
 
+    fun setHasSeenSuperMichiIntro(seen: Boolean) {
+        _uiState.update { state ->
+            state.copy(
+                hasSeenSuperMichiIntro = seen,
+                showSuperGreeting = if (seen) false else state.showSuperGreeting
+            )
+        }
+    }
+
     fun goToSettings() {
         _uiState.update { state ->
             state.copy(screen = Screen.SETTINGS)
@@ -142,7 +167,9 @@ class GameViewModel(
             opponent = state.opponent,
             musicEnabled = state.musicEnabled,
             vibrationEnabled = state.vibrationEnabled,
-            notificationsEnabled = state.notificationsEnabled
+            notificationsEnabled = state.notificationsEnabled,
+            selectedThemeType = state.selectedThemeType,
+            hasSeenSuperMichiIntro = state.hasSeenSuperMichiIntro
         )
     }
 
@@ -386,6 +413,23 @@ class GameViewModel(
             Difficulty.EASY -> CatOpponent.LILY
             Difficulty.MEDIUM -> CatOpponent.COCO
             Difficulty.HARD -> CatOpponent.SALEM
+        }
+    }
+
+    private fun opponentForTheme(themeType: ThemeType): CatOpponent? {
+        return when (themeType) {
+            ThemeType.Luz -> null
+            ThemeType.Lily -> CatOpponent.LILY
+            ThemeType.Coco -> CatOpponent.COCO
+            ThemeType.Salem -> CatOpponent.SALEM
+        }
+    }
+
+    private fun themeForOpponent(opponent: CatOpponent): ThemeType {
+        return when (opponent) {
+            CatOpponent.LILY -> ThemeType.Lily
+            CatOpponent.COCO -> ThemeType.Coco
+            CatOpponent.SALEM -> ThemeType.Salem
         }
     }
 

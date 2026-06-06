@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -48,15 +49,17 @@ import com.luigidev.michixo.mobile.presentation.theme.MichiBoard
 import com.luigidev.michixo.mobile.presentation.theme.MichiButton
 import com.luigidev.michixo.mobile.presentation.theme.MichiDeepPink
 import com.luigidev.michixo.mobile.presentation.theme.MichiFont
-import com.luigidev.michixo.mobile.presentation.theme.MichiO
+import com.luigidev.michixo.mobile.presentation.theme.MichiGameTheme
 import com.luigidev.michixo.mobile.presentation.theme.MichiPink
 import com.luigidev.michixo.mobile.presentation.theme.MichiSoftPink
 import com.luigidev.michixo.mobile.presentation.theme.MichiWhite
+import com.luigidev.michixo.mobile.presentation.theme.ThemeType
 import com.luigidev.michixo.model.Player
 
 @Composable
 fun SuperGatoGameContent(
     uiState: GameUiState,
+    gameTheme: MichiGameTheme,
     isLandscape: Boolean,
     onCellTap: (Int, Int) -> Unit,
     onGreetingDismiss: () -> Unit,
@@ -86,6 +89,7 @@ fun SuperGatoGameContent(
                 ) {
                     SuperSidePanel(
                         uiState = uiState,
+                        gameTheme = gameTheme,
                         onPauseClick = onPauseClick,
                         onSettingsClick = onSettingsClick,
                         compact = !isTablet,
@@ -97,6 +101,7 @@ fun SuperGatoGameContent(
                     ) {
                         SuperGatoBoard(
                             uiState = uiState,
+                            gameTheme = gameTheme,
                             onCellTap = onCellTap,
                             modifier = boardModifier
                         )
@@ -109,19 +114,21 @@ fun SuperGatoGameContent(
                         .verticalScroll(rememberScrollState()),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    GameHeader()
+                    GameHeader(gameTheme)
                     Spacer(modifier = Modifier.height(if (isTablet) 18.dp else 12.dp))
-                    SuperMatchHeader(uiState = uiState, compact = !isTablet)
+                    SuperMatchHeader(uiState = uiState, gameTheme = gameTheme, compact = !isTablet)
                     Spacer(modifier = Modifier.height(if (isTablet) 18.dp else 12.dp))
                     SuperGatoBoard(
                         uiState = uiState,
+                        gameTheme = gameTheme,
                         onCellTap = onCellTap,
                         modifier = boardModifier
                     )
                     Spacer(modifier = Modifier.height(if (isTablet) 18.dp else 12.dp))
-                    SuperStatus(uiState = uiState)
+                    SuperStatus(uiState = uiState, gameTheme = gameTheme)
                     Spacer(modifier = Modifier.height(if (isTablet) 18.dp else 14.dp))
                     GameActions(
+                        gameTheme = gameTheme,
                         onPauseClick = onPauseClick,
                         onSettingsClick = onSettingsClick
                     )
@@ -132,6 +139,7 @@ fun SuperGatoGameContent(
             if (uiState.showSuperGreeting) {
                 SuperGreetingOverlay(
                     opponent = uiState.opponent,
+                    gameTheme = gameTheme,
                     isLandscape = isLandscape,
                     isTablet = isTablet,
                     onDismiss = onGreetingDismiss,
@@ -145,11 +153,13 @@ fun SuperGatoGameContent(
 @Composable
 private fun SuperGreetingOverlay(
     opponent: CatOpponent,
+    gameTheme: MichiGameTheme,
     isLandscape: Boolean,
     isTablet: Boolean,
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val nightMode = gameTheme.themeName == "Salem"
     Box(
         modifier = modifier
             .background(Color.Black.copy(alpha = 0.18f))
@@ -163,7 +173,7 @@ private fun SuperGreetingOverlay(
                 .widthIn(max = 860.dp)
                 .clickable(enabled = false) {},
             shape = RoundedCornerShape(26.dp),
-            color = MichiSoftPink,
+            color = if (nightMode) gameTheme.boardColor else MichiSoftPink,
             shadowElevation = 8.dp
         ) {
             val imageSize = when {
@@ -201,8 +211,8 @@ private fun SuperGreetingOverlay(
                         onClick = onDismiss,
                         shape = RoundedCornerShape(22.dp),
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = MichiButton,
-                            contentColor = MichiWhite
+                            containerColor = if (nightMode) gameTheme.primaryColor else MichiButton,
+                            contentColor = if (nightMode) gameTheme.backgroundColor else MichiWhite
                         )
                     ) {
                         Text(
@@ -236,6 +246,7 @@ private fun CatOpponent.greetingText(): String {
 @Composable
 private fun SuperSidePanel(
     uiState: GameUiState,
+    gameTheme: MichiGameTheme,
     onPauseClick: () -> Unit,
     onSettingsClick: () -> Unit,
     compact: Boolean,
@@ -246,13 +257,14 @@ private fun SuperSidePanel(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        GameHeader()
+        GameHeader(gameTheme)
         Spacer(modifier = Modifier.height(if (compact) 12.dp else 20.dp))
-        SuperMatchHeader(uiState = uiState, compact = compact)
+        SuperMatchHeader(uiState = uiState, gameTheme = gameTheme, compact = compact)
         Spacer(modifier = Modifier.height(if (compact) 12.dp else 20.dp))
-        SuperStatus(uiState = uiState)
+        SuperStatus(uiState = uiState, gameTheme = gameTheme)
         Spacer(modifier = Modifier.height(if (compact) 12.dp else 20.dp))
         GameActions(
+            gameTheme = gameTheme,
             onPauseClick = onPauseClick,
             onSettingsClick = onSettingsClick
         )
@@ -262,8 +274,10 @@ private fun SuperSidePanel(
 @Composable
 private fun SuperMatchHeader(
     uiState: GameUiState,
+    gameTheme: MichiGameTheme,
     compact: Boolean
 ) {
+    val themedMode = gameTheme.themeType != ThemeType.Luz
     val avatarSize = if (compact) 50.dp else 66.dp
     val vsSize = if (compact) 18.sp else 22.sp
 
@@ -273,13 +287,13 @@ private fun SuperMatchHeader(
     ) {
         Surface(
             shape = RoundedCornerShape(18.dp),
-            color = MichiWhite,
+            color = if (themedMode) gameTheme.boardColor else MichiWhite,
             shadowElevation = 3.dp
         ) {
             Text(
                 text = stringResource(R.string.you_short),
                 modifier = Modifier.padding(horizontal = 18.dp, vertical = 10.dp),
-                color = MichiButton,
+                color = if (themedMode) gameTheme.pauseAccentColor else MichiButton,
                 fontWeight = FontWeight.Bold,
                 fontSize = if (compact) 15.sp else 18.sp
             )
@@ -289,7 +303,7 @@ private fun SuperMatchHeader(
             text = stringResource(R.string.vs),
             fontFamily = MichiFont,
             fontSize = vsSize,
-            color = MichiButton
+            color = if (themedMode) gameTheme.pauseAccentColor.copy(alpha = 0.82f) else MichiButton
         )
         Spacer(modifier = Modifier.width(10.dp))
         CatAvatar(
@@ -301,7 +315,7 @@ private fun SuperMatchHeader(
 }
 
 @Composable
-private fun SuperStatus(uiState: GameUiState) {
+private fun SuperStatus(uiState: GameUiState, gameTheme: MichiGameTheme) {
     val activeBoard = uiState.superGato.activeBoard
     Text(
         text = when {
@@ -313,7 +327,7 @@ private fun SuperStatus(uiState: GameUiState) {
             activeBoard == null -> stringResource(R.string.super_status_any_board)
             else -> stringResource(R.string.super_status_board, activeBoard + 1)
         },
-        color = MichiButton,
+        color = gameTheme.primaryColor,
         fontSize = 14.sp,
         fontWeight = FontWeight.SemiBold,
         textAlign = TextAlign.Center
@@ -323,13 +337,14 @@ private fun SuperStatus(uiState: GameUiState) {
 @Composable
 fun SuperGatoBoard(
     uiState: GameUiState,
+    gameTheme: MichiGameTheme,
     onCellTap: (Int, Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Surface(
         modifier = modifier.aspectRatio(1f),
         shape = RoundedCornerShape(24.dp),
-        color = MichiBoard,
+        color = gameTheme.boardColor,
         tonalElevation = 2.dp
     ) {
         Column(
@@ -347,6 +362,7 @@ fun SuperGatoBoard(
                         val boardIndex = boardRow * 3 + boardCol
                         SmallSuperBoard(
                             uiState = uiState,
+                            gameTheme = gameTheme,
                             boardIndex = boardIndex,
                             onCellTap = onCellTap,
                             modifier = Modifier.weight(1f)
@@ -361,6 +377,7 @@ fun SuperGatoBoard(
 @Composable
 private fun SmallSuperBoard(
     uiState: GameUiState,
+    gameTheme: MichiGameTheme,
     boardIndex: Int,
     onCellTap: (Int, Int) -> Unit,
     modifier: Modifier = Modifier
@@ -377,11 +394,11 @@ private fun SmallSuperBoard(
             .aspectRatio(1f)
             .border(
                 width = if (highlighted) 2.dp else 1.dp,
-                color = if (highlighted) MichiButton else MichiPink,
+                color = if (highlighted) gameTheme.primaryColor else gameTheme.secondaryColor,
                 shape = RoundedCornerShape(12.dp)
             ),
         shape = RoundedCornerShape(12.dp),
-        color = if (playable) MichiWhite else MichiDeepPink
+        color = if (playable) gameTheme.secondaryColor else gameTheme.boardColor
     ) {
         Box {
             Column(
@@ -399,6 +416,7 @@ private fun SmallSuperBoard(
                             val cellIndex = row * 3 + col
                             MiniSuperCell(
                                 value = uiState.superGato.cells[boardIndex * 9 + cellIndex],
+                                gameTheme = gameTheme,
                                 playable = playable,
                                 onClick = { onCellTap(boardIndex, cellIndex) },
                                 modifier = Modifier.weight(1f)
@@ -412,12 +430,13 @@ private fun SmallSuperBoard(
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
-                        .background(MichiWhite.copy(alpha = 0.76f)),
+                        .background(gameTheme.boardColor.copy(alpha = 0.76f)),
                     contentAlignment = Alignment.Center
                 ) {
                     PlayerMark(
                         value = owner,
-                        modifier = Modifier.fillMaxSize(0.62f)
+                        gameTheme = gameTheme,
+                        modifier = Modifier.fillMaxSize(0.75f)
                     )
                 }
             }
@@ -428,6 +447,7 @@ private fun SmallSuperBoard(
 @Composable
 private fun MiniSuperCell(
     value: Player,
+    gameTheme: MichiGameTheme,
     playable: Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
@@ -437,13 +457,14 @@ private fun MiniSuperCell(
             .aspectRatio(1f)
             .clip(RoundedCornerShape(5.dp))
             .clickable(enabled = playable && value == Player.NONE) { onClick() },
-        color = MichiSoftPink,
+        color = gameTheme.backgroundColor,
         shape = RoundedCornerShape(5.dp)
     ) {
         Box(contentAlignment = Alignment.Center) {
             PlayerMark(
                 value = value,
-                modifier = Modifier.fillMaxSize(0.72f)
+                gameTheme = gameTheme,
+                modifier = Modifier.fillMaxSize(0.78f)
             )
         }
     }
@@ -452,23 +473,55 @@ private fun MiniSuperCell(
 @Composable
 private fun PlayerMark(
     value: Player,
+    gameTheme: MichiGameTheme,
     modifier: Modifier = Modifier
 ) {
     when (value) {
         Player.X -> Icon(
-            painter = painterResource(id = R.drawable.ic_yarn),
+            painter = painterResource(id = gameTheme.xIcon),
             contentDescription = stringResource(R.string.cd_player_x),
             modifier = modifier,
-            tint = Color.Unspecified
+            tint = gameTheme.xColor
         )
 
-        Player.O -> Icon(
-            imageVector = Icons.Filled.Pets,
-            contentDescription = stringResource(R.string.cd_player_o),
-            modifier = modifier,
-            tint = MichiO
-        )
+        Player.O -> {
+            if (gameTheme.useLibraryPawForO) {
+                LuzPawBadge(
+                    contentDescription = stringResource(R.string.cd_player_o),
+                    modifier = modifier,
+                    pawColor = gameTheme.oColor
+                )
+            } else {
+                Icon(
+                    painter = painterResource(id = gameTheme.oIcon),
+                    contentDescription = stringResource(R.string.cd_player_o),
+                    modifier = modifier,
+                    tint = gameTheme.oColor
+                )
+            }
+        }
 
         Player.NONE -> {}
+    }
+}
+
+@Composable
+private fun LuzPawBadge(
+    contentDescription: String,
+    modifier: Modifier = Modifier,
+    pawColor: Color
+) {
+    Box(
+        modifier = modifier
+            .clip(CircleShape)
+            .background(MichiWhite.copy(alpha = 0.86f)),
+        contentAlignment = Alignment.Center
+    ) {
+        Icon(
+            imageVector = Icons.Filled.Pets,
+            contentDescription = contentDescription,
+            modifier = Modifier.fillMaxSize(0.72f),
+            tint = pawColor
+        )
     }
 }

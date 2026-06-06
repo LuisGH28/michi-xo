@@ -13,11 +13,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
 import com.luigidev.michixo.mobile.R
 import com.luigidev.michixo.mobile.presentation.CatOpponent
@@ -44,15 +44,15 @@ fun CatAvatar(
         } ?: 0
     }
     val background = when (opponent) {
-        CatOpponent.LILY -> Color(0xFFF3E7D2)
-        CatOpponent.COCO -> Color(0xFFFFF9EF)
-        CatOpponent.SALEM -> Color(0xFF2B292D)
+        CatOpponent.LILY -> colorResource(R.color.michi_lily_cream)
+        CatOpponent.COCO -> colorResource(R.color.michi_coco_board)
+        CatOpponent.SALEM -> colorResource(R.color.michi_salem_night)
         null -> MichiPink
     }
     val tint = when (opponent) {
-        CatOpponent.SALEM -> Color(0xFFE8C98B)
-        CatOpponent.COCO -> Color(0xFFB7D6DE)
-        CatOpponent.LILY -> Color(0xFF93B5DD)
+        CatOpponent.SALEM -> colorResource(R.color.michi_salem_moon)
+        CatOpponent.COCO -> colorResource(R.color.michi_coco_accent)
+        CatOpponent.LILY -> colorResource(R.color.michi_lily_accent)
         null -> MichiSoftBrown
     }
 
