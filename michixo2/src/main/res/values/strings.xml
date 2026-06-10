@@ -197,4 +197,10 @@
 
     <string name="notification_draw_title">Let’s break the tie</string>
     <string name="notification_draw_body">The last match ended in a draw ✨</string>
+
+    <string name="update_title">✨ New Update Available!</string>
+    <string name="update_message">Hi human! I found a new MichiXO update. Come discover new improvements, fixes and kitty magic!</string>
+    <string name="update_now">Update Now</string>
+    <string name="update_later">Maybe Later</string>
+    <string name="update_luz_greeting">Hi human! I found something new for you!</string>
 </resources>

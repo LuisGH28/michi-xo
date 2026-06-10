@@ -1,7 +1,10 @@
 package com.luigidev.michixo.mobile.presentation.ui
 
 import android.Manifest
+import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -19,6 +22,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.luigidev.michixo.mobile.audio.MusicManager
 import com.luigidev.michixo.mobile.data.NotificationPreferences
+import com.luigidev.michixo.mobile.data.UpdatePreferences
 import com.luigidev.michixo.mobile.data.UserBehaviorStore
 import com.luigidev.michixo.mobile.notifications.NotificationHelper
 import com.luigidev.michixo.mobile.notifications.NotificationScheduler
@@ -30,6 +34,8 @@ import com.luigidev.michixo.mobile.presentation.theme.ThemeManager
 class MainActivity : AppCompatActivity() {
     private companion object {
         const val KEY_HAS_SEEN_SUPER_MICHI_INTRO = "has_seen_super_michi_intro"
+        const val UPDATE_PLAY_STORE_URL =
+            "https://play.google.com/store/apps/details?id=com.luigidev.michixo.mobile&hl=es_MX"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -51,9 +57,13 @@ class MainActivity : AppCompatActivity() {
                 val notificationPreferences = remember {
                     NotificationPreferences(context)
                 }
+                val updatePreferences = remember {
+                    UpdatePreferences(context)
+                }
                 val introPreferences = remember {
                     context.getSharedPreferences("michixo_intro", 0)
                 }
+                var showUpdateDialog by remember { mutableStateOf(false) }
 
                 vm.onGameFinished = { result ->
                     behaviorStore.saveGamePlayed(result)
@@ -122,6 +132,8 @@ class MainActivity : AppCompatActivity() {
                             NotificationScheduler.scheduleDailyReminder(context)
                         }
                     }
+
+                    showUpdateDialog = updatePreferences.shouldShowUpdateDialog()
                 }
 
                 LaunchedEffect(themeRestored, uiState.selectedThemeType) {
@@ -187,6 +199,19 @@ class MainActivity : AppCompatActivity() {
                         }
                     }
                 )
+
+                if (showUpdateDialog) {
+                    UpdateAvailableDialog(
+                        onUpdateNow = {
+                            showUpdateDialog = false
+                            openPlayStoreUpdate(context)
+                        },
+                        onDismiss = {
+                            updatePreferences.saveDismissalTimestamp()
+                            showUpdateDialog = false
+                        }
+                    )
+                }
             }
         }
     }
@@ -194,5 +219,10 @@ class MainActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         MusicManager.stop()
+    }
+
+    private fun openPlayStoreUpdate(context: Context) {
+        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(UPDATE_PLAY_STORE_URL))
+        context.startActivity(intent)
     }
 }

@@ -193,4 +193,10 @@
 
     <string name="notification_draw_title">Hay que desempatar</string>
     <string name="notification_draw_body">La última partida quedó empatada ✨</string>
+
+    <string name="update_title">✨ ¡Nueva actualización disponible!</string>
+    <string name="update_message">¡Hola humano! Encontré una nueva actualización de MichiXO. Ven a descubrir mejoras, arreglos y magia gatuna.</string>
+    <string name="update_now">Actualizar ahora</string>
+    <string name="update_later">Quizá después</string>
+    <string name="update_luz_greeting">¡Hola humano! Encontré algo nuevo para ti.</string>
 </resources>
